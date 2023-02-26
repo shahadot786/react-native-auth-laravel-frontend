@@ -1,24 +1,26 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import Button from '../../components/buttons/Button';
 import {useNavigation} from '@react-navigation/native';
 import CheckBoxContainer from '../../components/CheckBoxContainer';
 import RouteName from '../../constants/RouteName';
 import CustomInput from '../../components/input/CustomInput';
 import {useForm} from 'react-hook-form';
-import {login} from '../../auth/auth';
+import {AuthContext, login} from '../../auth/auth';
 import {CirclesLoader} from 'react-native-indicator';
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const SignInForm = () => {
+  const {setIsLoggedIn} = useContext(AuthContext);
   const navigation = useNavigation();
   const {control, handleSubmit} = useForm();
   const [isLoading, setIsLoading] = useState(false);
 
   const onSignInPressed = async data => {
     setIsLoading(true);
+    setIsLoggedIn(true);
     const {password, email} = data;
     try {
       await login(email, password);

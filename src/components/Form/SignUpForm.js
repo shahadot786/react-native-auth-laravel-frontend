@@ -1,11 +1,11 @@
 import {View, StyleSheet} from 'react-native';
-import React, {useState} from 'react';
+import React, {useContext, useState} from 'react';
 import CustomInput from '../input/CustomInput';
 import {useForm} from 'react-hook-form';
 import Button from '../buttons/Button';
 import {useNavigation} from '@react-navigation/native';
 import RouteName from '../../constants/RouteName';
-import {register} from '../../auth/auth';
+import {AuthContext, register} from '../../auth/auth';
 import {CirclesLoader} from 'react-native-indicator';
 import Colors from '../../constants/Colors';
 
@@ -13,6 +13,7 @@ const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
 
 const SignUpForm = () => {
+  const {setIsLoggedIn} = useContext(AuthContext);
   const navigation = useNavigation();
   const {control, handleSubmit, watch} = useForm();
   const pwd = watch('password');
@@ -20,6 +21,7 @@ const SignUpForm = () => {
 
   const onSignUpPressed = async data => {
     setIsLoading(true);
+    setIsLoggedIn(true);
     const {name, email, phone, password, passwordConfirmation} = data;
     try {
       await register(name, email, phone, password, passwordConfirmation);
@@ -73,12 +75,12 @@ const SignUpForm = () => {
         rules={{
           required: 'Phone Number is required',
           minLength: {
-            value: 8,
-            message: 'Phone Number should be at least 8 characters long',
+            value: 11,
+            message: 'Phone Number should be at least 11 characters long',
           },
           maxLength: {
-            value: 11,
-            message: 'Phone Number should be max 11 characters long',
+            value: 20,
+            message: 'Phone Number should be max 20 characters long',
           },
         }}
       />

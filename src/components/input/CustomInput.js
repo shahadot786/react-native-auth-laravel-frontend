@@ -30,7 +30,7 @@ const CustomInput = ({
                   editable
                   defaultCode="BD"
                   placeholder={placeholder}
-                  placeholderTextColor={Colors.gray}
+                  placeholderTextColor="#818181"
                   value={value}
                   onChangeFormattedText={onChange}
                   onBlur={onBlur}

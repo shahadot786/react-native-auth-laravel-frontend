@@ -27,29 +27,36 @@ const NavigationHome = () => {
     checkLoginStatus();
   }, []);
   return (
-    <AuthContext.Provider value={{isLoggedIn, userData}}>
+    <AuthContext.Provider value={{isLoggedIn, userData, setIsLoggedIn}}>
       <NavigationContainer>
         <Stack.Navigator>
-          <Stack.Screen
-            name={RouteName.signIn}
-            component={SignInScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name={RouteName.signUp}
-            component={SignUpScreen}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name={RouteName.bottomTab}
-            component={TabNavigation}
-            options={{headerShown: false}}
-          />
-          <Stack.Screen
-            name={RouteName.greetings}
-            component={GreetingsScreen}
-            options={{headerShown: false}}
-          />
+          {isLoggedIn ? (
+            <>
+              <Stack.Screen
+                name={RouteName.bottomTab}
+                component={TabNavigation}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name={RouteName.greetings}
+                component={GreetingsScreen}
+                options={{headerShown: false}}
+              />
+            </>
+          ) : (
+            <>
+              <Stack.Screen
+                name={RouteName.signIn}
+                component={SignInScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name={RouteName.signUp}
+                component={SignUpScreen}
+                options={{headerShown: false}}
+              />
+            </>
+          )}
         </Stack.Navigator>
       </NavigationContainer>
     </AuthContext.Provider>
