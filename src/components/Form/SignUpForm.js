@@ -6,7 +6,7 @@ import Button from '../buttons/Button';
 import {useNavigation} from '@react-navigation/native';
 import RouteName from '../../constants/RouteName';
 import {register} from '../../auth/auth';
-import {ActivityIndicator} from 'react-native';
+import {CirclesLoader} from 'react-native-indicator';
 import Colors from '../../constants/Colors';
 
 const EMAIL_REGEX =
@@ -33,6 +33,11 @@ const SignUpForm = () => {
 
   return (
     <View style={styles.input}>
+      <View style={styles.loading}>
+        {isLoading && (
+          <CirclesLoader size={30} color={Colors.primary} dotRadius={5} />
+        )}
+      </View>
       <CustomInput
         iconName={'user'}
         name="name"
@@ -115,7 +120,6 @@ const SignUpForm = () => {
           SIGN UP
         </Button>
       </View>
-      {isLoading && <ActivityIndicator size="large" color={Colors.primary} />}
     </View>
   );
 };
@@ -132,4 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     marginTop: 25,
   },
+  loading:{
+    alignItems:'center'
+  }
 });

@@ -1,5 +1,5 @@
 import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
-import React, {useContext, useState} from 'react';
+import React, {useState} from 'react';
 import Button from '../../components/buttons/Button';
 import {useNavigation} from '@react-navigation/native';
 import CheckBoxContainer from '../../components/CheckBoxContainer';
@@ -7,7 +7,7 @@ import RouteName from '../../constants/RouteName';
 import CustomInput from '../../components/input/CustomInput';
 import {useForm} from 'react-hook-form';
 import {login} from '../../auth/auth';
-import {ActivityIndicator} from 'react-native';
+import {CirclesLoader} from 'react-native-indicator';
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -30,6 +30,9 @@ const SignInForm = () => {
   };
   return (
     <View style={styles.input}>
+      {isLoading && (
+        <CirclesLoader size={30} color={Colors.primary} dotRadius={5} />
+      )}
       <CustomInput
         iconName={'envelope'}
         name="email"
@@ -75,7 +78,6 @@ const SignInForm = () => {
           LOGIN
         </Button>
       </View>
-      {isLoading && <ActivityIndicator size="large" color={Colors.primary} />}
     </View>
   );
 };

@@ -31,13 +31,13 @@ const NavigationHome = () => {
       <NavigationContainer>
         <Stack.Navigator>
           <Stack.Screen
-            name={RouteName.signUp}
-            component={SignUpScreen}
+            name={RouteName.signIn}
+            component={SignInScreen}
             options={{headerShown: false}}
           />
           <Stack.Screen
-            name={RouteName.signIn}
-            component={SignInScreen}
+            name={RouteName.signUp}
+            component={SignUpScreen}
             options={{headerShown: false}}
           />
           <Stack.Screen
