@@ -48,7 +48,7 @@ const SignUpForm = () => {
         rules={{
           required: 'Name is required',
           pattern: {
-            value: /^[A-Za-z]+$/i,
+            value: /^[a-zA-Z ]*$/,
             message: 'Invalid Name. Use [A-Z or a-z]',
           },
           minLength: {
@@ -90,7 +90,7 @@ const SignUpForm = () => {
       />
       <CustomInput
         iconName={'lock'}
-        eye
+        //eye
         name="password"
         placeholder="Password"
         control={control}
@@ -111,7 +111,7 @@ const SignUpForm = () => {
       />
       <CustomInput
         iconName={'lock'}
-        eye
+        //eye
         name="confirm-password"
         placeholder="Confirm Password"
         control={control}
