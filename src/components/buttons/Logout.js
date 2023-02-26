@@ -8,7 +8,6 @@ import RouteName from '../../constants/RouteName';
 
 const Logout = () => {
   const navigation = useNavigation();
-
   const handleLogout = async () => {
     await logout();
     navigation.navigate(RouteName.signIn);

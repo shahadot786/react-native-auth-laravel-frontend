@@ -8,22 +8,18 @@ import SubTitle from './SubTitle';
 import Avatar from './images/Avatar';
 import UsersIcons from './UsersIcons';
 import CoinButton from './buttons/CoinButton';
-import {useNavigation} from '@react-navigation/native';
-import RouteName from '../constants/RouteName';
 import Logout from './buttons/Logout';
+import {AuthContext} from '../auth/auth';
 
 const height = Dimensions.get('screen').height;
 const width = Dimensions.get('screen').width;
 
 const HeaderBackground = () => {
-  const navigation = useNavigation();
+  const {userData} = useContext(AuthContext);
 
   return (
     <View style={styles.container}>
-      <BackArrow
-        visibility={true}
-        onPressBack={() => navigation.navigate(RouteName.signIn)}
-      />
+      <BackArrow visibility={false} />
       {/* logout */}
       <View style={styles.logout}>
         <Logout />
@@ -33,7 +29,7 @@ const HeaderBackground = () => {
           <Avatar source={Images.profile1} />
           <View>
             <Title color={Colors.black} fontSize={14}>
-              sakib al hasan
+              {userData.name}
             </Title>
             <SubTitle color={Colors.white} fontSize={14}>
               super star
@@ -108,7 +104,7 @@ const styles = StyleSheet.create({
   },
   logout: {
     position: 'absolute',
-    right:20,
-    top:10
+    right: 20,
+    top: 10,
   },
 });
