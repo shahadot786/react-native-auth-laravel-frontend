@@ -29,7 +29,7 @@ const HeaderBackground = () => {
           <Avatar source={Images.profile1} />
           <View>
             <Title color={Colors.black} fontSize={14}>
-              {userData.name}
+              {userData ? userData.name : 'username'}
             </Title>
             <SubTitle color={Colors.white} fontSize={14}>
               super star

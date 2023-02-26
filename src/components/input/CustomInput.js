@@ -4,6 +4,7 @@ import {Controller} from 'react-hook-form';
 import Colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
+import PhoneNumberInput from 'react-native-phone-number-input';
 
 const CustomInput = ({
   control,
@@ -12,6 +13,7 @@ const CustomInput = ({
   placeholder,
   secureTextEntry,
   iconName,
+  number,
 }) => {
   return (
     <Controller
@@ -20,29 +22,66 @@ const CustomInput = ({
       rules={rules}
       render={({field: {value, onChange, onBlur}, fieldState: {error}}) => (
         <>
-          <Text style={styles.text}>{name}</Text>
-          <Animatable.View
-            animation={error && 'shake'}
-            style={[
-              styles.container,
-              {borderColor: error ? 'red' : Colors.primary},
-            ]}>
-            <Icon
-              style={styles.inputIcon}
-              name={iconName}
-              size={20}
-              color={Colors.primary}
-            />
-            <TextInput
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              placeholder={placeholder}
-              style={styles.input}
-              secureTextEntry={secureTextEntry}
-              placeholderTextColor={Colors.gray}
-            />
-          </Animatable.View>
+          {number ? (
+            <>
+              <Text style={styles.text}>{name}</Text>
+              <Animatable.View animation={error && 'shake'}>
+                <PhoneNumberInput
+                  editable
+                  defaultCode="BD"
+                  placeholder={placeholder}
+                  placeholderTextColor={Colors.gray}
+                  value={value}
+                  onChangeFormattedText={onChange}
+                  onBlur={onBlur}
+                  containerStyle={[
+                    styles.containerNumber,
+                    {borderColor: error ? 'red' : Colors.primary},
+                  ]}
+                  textContainerStyle={[
+                    styles.input,
+                    {
+                      backgroundColor: 'transparent',
+                    },
+                  ]}
+                  textInputStyle={{
+                    fontSize: 14,
+                    color: Colors.white,
+                  }}
+                  codeTextStyle={{
+                    color: Colors.gray,
+                  }}
+                />
+              </Animatable.View>
+            </>
+          ) : (
+            <>
+              <Text style={styles.text}>{name}</Text>
+              <Animatable.View
+                animation={error && 'shake'}
+                style={[
+                  styles.container,
+                  {borderColor: error ? 'red' : Colors.primary},
+                ]}>
+                <Icon
+                  style={styles.inputIcon}
+                  name={iconName}
+                  size={20}
+                  color={Colors.primary}
+                />
+                <TextInput
+                  value={value}
+                  onChangeText={onChange}
+                  onBlur={onBlur}
+                  placeholder={placeholder}
+                  style={styles.input}
+                  secureTextEntry={secureTextEntry}
+                  placeholderTextColor={Colors.gray}
+                />
+              </Animatable.View>
+            </>
+          )}
+
           {error && (
             <Text style={{color: 'red', alignSelf: 'stretch', marginLeft: 10}}>
               {error.message || 'Error'}
@@ -66,6 +105,20 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     alignItems: 'center',
     marginTop: 10,
+    paddingVertical: 2,
+  },
+  containerNumber: {
+    borderWidth: 1,
+    flexDirection: 'row',
+    backgroundColor: 'transparent',
+    borderColor: Colors.primary,
+    borderRadius: 25,
+    marginBottom: 5,
+    alignItems: 'center',
+    marginTop: 10,
+    justifyContent: 'center',
+    width: '100%',
+    height: 46,
   },
   input: {
     paddingTop: 4,

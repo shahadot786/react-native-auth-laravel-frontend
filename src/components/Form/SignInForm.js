@@ -22,7 +22,7 @@ const SignInForm = () => {
     const {password, email} = data;
     try {
       await login(email, password);
-      navigation.navigate(RouteName.bottomTab);
+      navigation.replace(RouteName.bottomTab);
     } catch (error) {
       console.log(error.message);
     }
@@ -30,9 +30,12 @@ const SignInForm = () => {
   };
   return (
     <View style={styles.input}>
-      {isLoading && (
-        <CirclesLoader size={30} color={Colors.primary} dotRadius={5} />
-      )}
+      <View style={styles.loading}>
+        {isLoading && (
+          <CirclesLoader size={30} color={Colors.primary} dotRadius={5} />
+        )}
+      </View>
+
       <CustomInput
         iconName={'envelope'}
         name="email"
@@ -100,5 +103,8 @@ const styles = StyleSheet.create({
   label: {
     color: Colors.white,
     marginTop: 5,
+  },
+  loading: {
+    alignItems: 'center',
   },
 });

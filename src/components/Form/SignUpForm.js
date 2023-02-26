@@ -23,7 +23,7 @@ const SignUpForm = () => {
     const {name, email, phone, password, passwordConfirmation} = data;
     try {
       await register(name, email, phone, password, passwordConfirmation);
-      navigation.navigate(RouteName.bottomTab);
+      navigation.replace(RouteName.bottomTab);
     } catch (error) {
       console.log(error.message);
     }
@@ -66,7 +66,7 @@ const SignUpForm = () => {
         }}
       />
       <CustomInput
-        iconName={'phone'}
+        number
         name="phone"
         placeholder="Your Phone Number"
         control={control}
@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     marginTop: 25,
   },
-  loading:{
-    alignItems:'center'
-  }
+  loading: {
+    alignItems: 'center',
+  },
 });
