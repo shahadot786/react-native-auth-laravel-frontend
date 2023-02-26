@@ -5,6 +5,7 @@ import Colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
 import PhoneNumberInput from 'react-native-phone-number-input';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const CustomInput = ({
   control,
@@ -14,6 +15,9 @@ const CustomInput = ({
   secureTextEntry,
   iconName,
   number,
+  eye,
+  visible,
+  togglePasswordVisibility,
 }) => {
   return (
     <Controller
@@ -77,7 +81,17 @@ const CustomInput = ({
                   style={styles.input}
                   secureTextEntry={secureTextEntry}
                   placeholderTextColor={Colors.gray}
+                  autoCapitalize="none"
+                  autoCorrect={false}
                 />
+                {eye && (
+                  <Icon
+                    style={styles.inputIconEye}
+                    name={'eye'}
+                    size={20}
+                    color={Colors.primary}
+                  />
+                )}
               </Animatable.View>
             </>
           )}
@@ -134,6 +148,9 @@ const styles = StyleSheet.create({
   inputIcon: {
     padding: 8,
     marginHorizontal: 2,
+  },
+  inputIconEye: {
+    marginLeft: 125,
   },
 });
 

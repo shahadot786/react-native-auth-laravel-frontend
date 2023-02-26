@@ -47,6 +47,10 @@ const SignUpForm = () => {
         control={control}
         rules={{
           required: 'Name is required',
+          pattern: {
+            value: /^[A-Za-z]+$/i,
+            message: 'Invalid Name. Use [A-Z or a-z]',
+          },
           minLength: {
             value: 6,
             message: 'Name should be at least 6 characters long',
@@ -86,12 +90,19 @@ const SignUpForm = () => {
       />
       <CustomInput
         iconName={'lock'}
+        eye
         name="password"
         placeholder="Password"
         control={control}
         secureTextEntry
         rules={{
           required: 'Password is required',
+          pattern: {
+            value:
+              /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?])[A-Za-z\d!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]{8,}$/i,
+            message:
+              'Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character',
+          },
           minLength: {
             value: 8,
             message: 'Password should minimum 8 characters long',
@@ -100,6 +111,7 @@ const SignUpForm = () => {
       />
       <CustomInput
         iconName={'lock'}
+        eye
         name="confirm-password"
         placeholder="Confirm Password"
         control={control}
