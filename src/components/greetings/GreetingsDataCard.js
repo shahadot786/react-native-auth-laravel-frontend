@@ -22,7 +22,7 @@ const GreetingsDataCard = () => {
       if (token) {
         true;
         const data = await getUserGreetingsData(token);
-        console.log(data);
+        //console.log(data);
       }
     };
     fetchData();

@@ -9,7 +9,7 @@ const BackArrow = ({visibility = false, onPressBack}) => {
       {visibility && (
         <View style={styles.arrow}>
           <TouchableOpacity activeOpacity={0.6} onPress={onPressBack}>
-            <Icon name={'ios-arrow-back'} size={22} color={Colors.white} />
+            <Icon name={'ios-arrow-back'} size={28} color={Colors.white} />
           </TouchableOpacity>
         </View>
       )}
