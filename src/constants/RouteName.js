@@ -5,5 +5,8 @@ export default RouteName = {
   bottomTab: 'BottomTab',
   notification: 'Notification',
   menu: 'Menu',
-  greetings:'Greetings'
+  greetings: 'Greetings',
+  allGreetings: 'AllGreetings',
+  createGreetings: 'CreateGreetings',
+  detailsGreetings: 'GreetingDetails',
 };
