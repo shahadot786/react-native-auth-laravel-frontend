@@ -21,7 +21,7 @@ const GreetingsScreen = ({route, navigation}) => {
         />
         <GreetingsCard
           icon={'add-circle-outline'}
-          title={'Create Greeting'}
+          title={'Create Greetings'}
           onPress={() => navigation.navigate(RouteName.createGreetings)}
         />
       </View>

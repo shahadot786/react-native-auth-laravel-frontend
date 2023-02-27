@@ -89,3 +89,20 @@ export const getUserData = async () => {
     return null;
   }
 };
+
+//get user data method
+export const getUserGreetingsData = async () => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      return null;
+    }
+    const response = await api.get('/greetings', {
+      headers: {Authorization: `Bearer ${token}`},
+    });
+    return response.data;
+  } catch (e) {
+    console.log(e);
+    return null;
+  }
+};
