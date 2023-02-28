@@ -22,5 +22,7 @@ const styles = StyleSheet.create({
     borderColor: Colors.primary,
     paddingHorizontal: 55,
     paddingVertical: 5,
+    justifyContent:'center',
+    alignItems:'center'
   },
 });

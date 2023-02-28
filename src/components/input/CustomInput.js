@@ -1,11 +1,10 @@
 import React from 'react';
-import {View, Text, TextInput, StyleSheet} from 'react-native';
+import {Text, TextInput, StyleSheet} from 'react-native';
 import {Controller} from 'react-hook-form';
 import Colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import * as Animatable from 'react-native-animatable';
 import PhoneNumberInput from 'react-native-phone-number-input';
-import {TouchableOpacity} from 'react-native-gesture-handler';
 
 const CustomInput = ({
   control,
@@ -18,6 +17,9 @@ const CustomInput = ({
   eye,
   visible,
   togglePasswordVisibility,
+  multiline,
+  numberOfLines,
+  editable,
 }) => {
   return (
     <Controller
@@ -83,6 +85,9 @@ const CustomInput = ({
                   placeholderTextColor={Colors.gray}
                   autoCapitalize="none"
                   autoCorrect={false}
+                  editable={editable}
+                  numberOfLines={numberOfLines}
+                  multiline={multiline}
                 />
                 {eye && (
                   <Icon

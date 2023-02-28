@@ -35,9 +35,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   spinner: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     borderWidth: 2,
     borderColor: Colors.primary,
     borderStyle: 'dashed',
