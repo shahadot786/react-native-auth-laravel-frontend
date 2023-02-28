@@ -1,14 +1,24 @@
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import React from 'react';
+import Colors from '../../constants/Colors';
+import BackArrow from '../../components/BackArrow';
 
-const GreetingsDetails = () => {
+const GreetingsDetails = ({route, navigation}) => {
+  const data = route.params.greetingsData;
   return (
-    <View>
-      <Text>GreetingsDetails</Text>
-    </View>
+    <ScrollView style={styles.container}>
+      <View>
+        <BackArrow visibility={true} onPressBack={() => navigation.goBack()} />
+      </View>
+      <Text>{data.title}</Text>
+    </ScrollView>
   );
 };
 
 export default GreetingsDetails;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.secondary,
+  },
+});

@@ -14,4 +14,5 @@ export default Images = {
   profile1: require('../../assets/images/profile_1.png'),
   setting: require('../../assets/images/settings.png'),
   notification: require('../../assets/images/notification.png'),
+  placeholderImg: require('../../assets/images/placeholder-image.png'),
 };

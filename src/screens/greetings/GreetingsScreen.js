@@ -34,7 +34,7 @@ export default GreetingsScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.darkBlue,
+    backgroundColor: Colors.secondary,
   },
   greetings: {
     marginVertical: 20,

@@ -30,6 +30,7 @@ const NavigationHome = () => {
     checkLoginStatus();
   }, []);
   return (
+    
     <AuthContext.Provider value={{isLoggedIn, userData, setIsLoggedIn}}>
       <NavigationContainer>
         <Stack.Navigator>

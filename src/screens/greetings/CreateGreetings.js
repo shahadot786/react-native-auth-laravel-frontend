@@ -1,8 +1,7 @@
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {StyleSheet, View, ScrollView} from 'react-native';
 import React from 'react';
 import Colors from '../../constants/Colors';
 import Heading from '../../components/Heading';
-import GreetingsDataCard from '../../components/greetings/GreetingsDataCard';
 import BackArrow from '../../components/BackArrow';
 import {useNavigation} from '@react-navigation/native';
 
@@ -16,7 +15,6 @@ const CreateGreetings = () => {
       <View style={styles.heading}>
         <Heading color={Colors.white}>Create Greetings</Heading>
       </View>
-      <GreetingsDataCard />
     </ScrollView>
   );
 };
@@ -26,7 +24,7 @@ export default CreateGreetings;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.darkBlue,
+    backgroundColor: Colors.secondary,
   },
   heading: {
     borderBottomWidth: 1,
