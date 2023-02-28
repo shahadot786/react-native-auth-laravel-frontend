@@ -10,12 +10,15 @@ import GreetingsScreen from '../screens/greetings/GreetingsScreen';
 import AllGreetings from '../screens/greetings/AllGreetings';
 import CreateGreetings from '../screens/greetings/CreateGreetings';
 import GreetingsDetails from '../screens/greetings/GreetingsDetails';
+import { View } from 'react-native';
+import Spinner from '../components/spinner/Spinner';
 
 const Stack = createNativeStackNavigator();
 
 const NavigationHome = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userData, setUserData] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkLoginStatus = async () => {
@@ -24,13 +27,21 @@ const NavigationHome = () => {
         setIsLoggedIn(true);
         const user = await getUserData(token);
         setUserData(user);
+        setIsLoading(false);
       }
     };
 
     checkLoginStatus();
   }, []);
+
+  if (isLoading) {
+    return (
+      <View style={{flex: 1, backgroundColor: Colors.secondary}}>
+        <Spinner />
+      </View>
+    );
+  }
   return (
-    
     <AuthContext.Provider value={{isLoggedIn, userData, setIsLoggedIn}}>
       <NavigationContainer>
         <Stack.Navigator>

@@ -4,9 +4,10 @@ import {useForm} from 'react-hook-form';
 import CustomInput from '../input/CustomInput';
 import Colors from '../../constants/Colors';
 import Button from '../buttons/Button';
-import ImagePicker from '../ImagePicker';
+import GreetingsImagePicker from '../GreetingsImagePicker';
 import VideoPicker from '../VideoPicker';
 import DateTimePicker from '../DateTimePicker';
+import ImageModal from '../modal/ImageModal';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
@@ -58,7 +59,7 @@ const GreetingsForm = () => {
       </View>
       {/* image picker */}
       <View>
-        <ImagePicker />
+        <ImageModal/>
       </View>
       {/* video picker */}
       <View>

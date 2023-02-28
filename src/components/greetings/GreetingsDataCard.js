@@ -73,7 +73,9 @@ const GreetingsDataCard = () => {
           )}
         />
       ) : (
-        <Heading color={Colors.white}>No Greetings Found</Heading>
+        <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
+          <Heading color={Colors.gray}>No Greetings Found</Heading>
+        </View>
       )}
     </View>
   );
