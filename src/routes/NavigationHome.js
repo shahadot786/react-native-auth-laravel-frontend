@@ -10,8 +10,10 @@ import GreetingsScreen from '../screens/greetings/GreetingsScreen';
 import AllGreetings from '../screens/greetings/AllGreetings';
 import CreateGreetings from '../screens/greetings/CreateGreetings';
 import GreetingsDetails from '../screens/greetings/GreetingsDetails';
-import { View } from 'react-native';
+import {View} from 'react-native';
 import Spinner from '../components/spinner/Spinner';
+import {CameraPermissionProvider} from '../context/CameraPermissionProvider';
+import {StoragePermissionProvider} from '../context/StoragePermissionProvider';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,54 +44,58 @@ const NavigationHome = () => {
     );
   }
   return (
-    <AuthContext.Provider value={{isLoggedIn, userData, setIsLoggedIn}}>
-      <NavigationContainer>
-        <Stack.Navigator>
-          {isLoggedIn ? (
-            <>
-              <Stack.Screen
-                name={RouteName.bottomTab}
-                component={TabNavigation}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name={RouteName.greetings}
-                component={GreetingsScreen}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name={RouteName.allGreetings}
-                component={AllGreetings}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name={RouteName.createGreetings}
-                component={CreateGreetings}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name={RouteName.detailsGreetings}
-                component={GreetingsDetails}
-                options={{headerShown: false}}
-              />
-            </>
-          ) : (
-            <>
-              <Stack.Screen
-                name={RouteName.signIn}
-                component={SignInScreen}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name={RouteName.signUp}
-                component={SignUpScreen}
-                options={{headerShown: false}}
-              />
-            </>
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </AuthContext.Provider>
+    <CameraPermissionProvider>
+      <StoragePermissionProvider>
+        <AuthContext.Provider value={{isLoggedIn, userData, setIsLoggedIn}}>
+          <NavigationContainer>
+            <Stack.Navigator>
+              {isLoggedIn ? (
+                <>
+                  <Stack.Screen
+                    name={RouteName.bottomTab}
+                    component={TabNavigation}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name={RouteName.greetings}
+                    component={GreetingsScreen}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name={RouteName.allGreetings}
+                    component={AllGreetings}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name={RouteName.createGreetings}
+                    component={CreateGreetings}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name={RouteName.detailsGreetings}
+                    component={GreetingsDetails}
+                    options={{headerShown: false}}
+                  />
+                </>
+              ) : (
+                <>
+                  <Stack.Screen
+                    name={RouteName.signIn}
+                    component={SignInScreen}
+                    options={{headerShown: false}}
+                  />
+                  <Stack.Screen
+                    name={RouteName.signUp}
+                    component={SignUpScreen}
+                    options={{headerShown: false}}
+                  />
+                </>
+              )}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </AuthContext.Provider>
+      </StoragePermissionProvider>
+    </CameraPermissionProvider>
   );
 };
 
