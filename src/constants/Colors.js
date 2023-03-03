@@ -7,4 +7,5 @@ export default Colors = {
   darkBlue: '#2D2E43',
   gray: '#818181',
   transparent: 'transparent',
+  green:'#15c55d'
 };

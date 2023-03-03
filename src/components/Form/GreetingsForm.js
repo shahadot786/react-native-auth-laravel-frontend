@@ -179,6 +179,16 @@ const GreetingsForm = () => {
                 Video is required!
               </Text>
             )}
+            {selectedVideo && (
+              <Text
+                style={{
+                  color: Colors.green,
+                  textAlign: 'center',
+                  marginTop: 5,
+                }}>
+                Video is selected
+              </Text>
+            )}
           </View>
           <View style={styles.button}>
             <Button
