@@ -5,57 +5,57 @@ import ImagePicker from 'react-native-image-crop-picker';
 const ImagePickerForm = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  useEffect(() => {
-    requestCameraPermission();
-    requestStoragePermission();
-  }, []);
+  // useEffect(() => {
+  //   requestCameraPermission();
+  //   requestStoragePermission();
+  // }, []);
 
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Camera Permission',
-          message: 'App needs access to your camera',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Camera permission denied');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const requestCameraPermission = async () => {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.CAMERA,
+  //       {
+  //         title: 'Camera Permission',
+  //         message: 'App needs access to your camera',
+  //         buttonNeutral: 'Ask Me Later',
+  //         buttonNegative: 'Cancel',
+  //         buttonPositive: 'OK',
+  //       },
+  //     );
+  //     if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+  //       console.log('Camera permission denied');
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
-  const requestStoragePermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
-        {
-          title: 'Storage Permission Required',
-          message:
-            'This app needs storage permission in order to save your selected images.',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('Storage permission granted');
-      } else {
-        console.log('Storage permission denied');
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const requestStoragePermission = async () => {
+  //   try {
+  //     const granted = await PermissionsAndroid.request(
+  //       PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+  //       {
+  //         title: 'Storage Permission Required',
+  //         message:
+  //           'This app needs storage permission in order to save your selected images.',
+  //       },
+  //     );
+  //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+  //       console.log('Storage permission granted');
+  //     } else {
+  //       console.log('Storage permission denied');
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handleSelectImage = async () => {
     try {
-      await requestStoragePermission();
+      //await requestStoragePermission();
       const image = await ImagePicker.openPicker({
         width: 300,
-        height: 400,
+        height: 250,
         cropping: true,
       });
       setSelectedImage(image);
@@ -89,11 +89,11 @@ const ImagePickerForm = () => {
       {selectedImage && (
         <Image
           source={{uri: selectedImage.path}}
-          style={{width: 300, height: 400}}
+          style={{width: 350, height: 250, marginVertical:15,borderRadius:15}}
         />
       )}
       <Button title="Select Image" onPress={handleSelectImage} />
-      <Button title="Submit" onPress={onSubmit} />
+      {/* <Button title="Submit" onPress={onSubmit} /> */}
     </View>
   );
 };

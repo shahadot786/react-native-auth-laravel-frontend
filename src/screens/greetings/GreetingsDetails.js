@@ -1,7 +1,12 @@
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, Dimensions} from 'react-native';
 import React from 'react';
 import Colors from '../../constants/Colors';
 import BackArrow from '../../components/BackArrow';
+import {Image} from 'react-native-animatable';
+import Heading from '../../components/Heading';
+import Images from '../../constants/Images';
+
+const width = Dimensions.get('screen').width;
 
 const GreetingsDetails = ({route, navigation}) => {
   const data = route.params.greetingsData;
@@ -10,7 +15,29 @@ const GreetingsDetails = ({route, navigation}) => {
       <View>
         <BackArrow visibility={true} onPressBack={() => navigation.goBack()} />
       </View>
-      <Text>{data.title}</Text>
+      <View style={styles.contentView}>
+        <Heading color={Colors.white}>{data.title}</Heading>
+        <Text style={{color: Colors.gray}}>{data.descriptions}</Text>
+        {data.image ? (
+          <Image
+            source={{uri: data.image ? data.image : null}}
+            style={{
+              width: width - 15,
+              height: 250,
+              borderRadius: 15,
+              resizeMode: 'cover',
+            }}
+          />
+        ) : (
+          <Image
+            source={Images.placeholderImg}
+            style={{width: 300, height: 250}}
+          />
+        )}
+
+        <Text style={{color: Colors.white}}>{data.date}</Text>
+        <Text style={{color: Colors.white}}>{data.time}</Text>
+      </View>
     </ScrollView>
   );
 };
@@ -20,5 +47,10 @@ export default GreetingsDetails;
 const styles = StyleSheet.create({
   container: {
     backgroundColor: Colors.secondary,
+  },
+  contentView: {
+    alignItems: 'center',
+    marginHorizontal: 15,
+    gap: 12,
   },
 });

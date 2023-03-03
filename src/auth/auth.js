@@ -106,3 +106,42 @@ export const getUserGreetingsData = async () => {
     return null;
   }
 };
+//create greetings
+//create greetings method
+export const createGreetings = async (
+  title,
+  descriptions,
+  image,
+  video,
+  date,
+  time,
+) => {
+  try {
+    const token = await getToken();
+    if (!token) {
+      return null;
+    }
+    const data = new FormData();
+    data.append('title', title);
+    data.append('descriptions', descriptions);
+    data.append('video', video);
+    data.append('date', date);
+    data.append('time', time);
+    data.append('image', {
+      uri: image,
+      type: 'image/jpg', // or your image mime type
+      name: image.split('/').pop(),
+    });
+    const response = await api.post('/greetings', data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+        Accept: 'application/json',
+      },
+    });
+    //console.log(response);
+    return response.data;
+  } catch (error) {
+    return Promise.reject(error.response.data);
+  }
+};

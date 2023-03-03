@@ -14,6 +14,7 @@ import Images from '../../constants/Images';
 import RouteName from '../../constants/RouteName';
 import {useGreetings} from '../../context/GreetingsProvider';
 import Heading from '../Heading';
+import {BASE_IMG_URL} from '@env';
 
 //get the screen width
 const width = Dimensions.get('screen').width;
@@ -40,10 +41,19 @@ const GreetingsDataCard = () => {
               {/* image and date/time */}
               <View style={styles.imageContainer}>
                 <View style={styles.imageView}>
-                  <Image
-                    style={styles.image}
-                    source={item.image ? item.image : Images.placeholderImg}
-                  />
+                  {item.image ? (
+                    <Image
+                      style={styles.image}
+                      source={{
+                        uri: item.image ? item.image : null,
+                      }}
+                    />
+                  ) : (
+                    <Image
+                      style={styles.image}
+                      source={Images.placeholderImg}
+                    />
+                  )}
                 </View>
                 <Text style={{color: Colors.white}}>{item.date}</Text>
                 <Text style={{color: Colors.gray}}>{item.time}</Text>
@@ -64,8 +74,8 @@ const GreetingsDataCard = () => {
                     textTransform: 'capitalize',
                     marginTop: 5,
                   }}>
-                  {item.descriptions?.length > 250
-                    ? `${item.descriptions.slice(0, 250)}...`
+                  {item.descriptions?.length > 120
+                    ? `${item.descriptions.slice(0, 120)}...`
                     : item.descriptions}
                 </Text>
               </View>
