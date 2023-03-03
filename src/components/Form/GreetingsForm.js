@@ -15,6 +15,7 @@ import RouteName from '../../constants/RouteName';
 import {createGreetings} from '../../auth/auth';
 import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
+import {Text} from 'react-native-animatable';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
@@ -23,8 +24,10 @@ const GreetingsForm = () => {
   const [loading, setLoading] = useState(false);
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
+  //validate image video date time
+  const [validateImage, setValidateImage] = useState(true);
+  const [validateVideo, setValidateVideo] = useState(true);
   const navigation = useNavigation();
-
   //convert the date time to local string
   const updatedDate = date.toLocaleDateString();
   const updatedTime = date.toLocaleTimeString();
@@ -39,6 +42,7 @@ const GreetingsForm = () => {
       });
       //console.log(image);
       setSelectedImage(image);
+      setValidateImage(true);
     } catch (error) {
       console.log(error);
     }
@@ -51,6 +55,7 @@ const GreetingsForm = () => {
       });
       //console.log(video);
       setSelectedVideo(video);
+      setValidateVideo(true);
     } catch (error) {
       console.log(error);
     }
@@ -58,6 +63,12 @@ const GreetingsForm = () => {
   const onSubmitHandler = async data => {
     //console.log(data);
     //console.log(selectedImage.path);
+    //validate the image and video
+    if (selectedImage == null) {
+      return setValidateImage(false);
+    } else if (selectedVideo == null) {
+      return setValidateVideo(false);
+    }
     setLoading(true);
     const {title, descriptions} = data;
     const image = selectedImage.path;
@@ -77,7 +88,6 @@ const GreetingsForm = () => {
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
       {/* input fields */}
-      {loading && <ActivityIndicator size="large" color={Colors.primary} />}
       <View>
         <CustomInput
           iconName={'align-left'}
@@ -91,8 +101,8 @@ const GreetingsForm = () => {
               message: 'Title should be at least 10 characters long',
             },
             maxLength: {
-              value: 50,
-              message: 'Title should be max 50 characters long',
+              value: 100,
+              message: 'Title should be max 100 characters long',
             },
           }}
         />
@@ -107,7 +117,7 @@ const GreetingsForm = () => {
             required: 'Description is required',
             minLength: {
               value: 2,
-              message: 'Description should be at least 100 characters long',
+              message: 'Description should be at least 50 characters long',
             },
             maxLength: {
               value: 4072,
@@ -130,6 +140,8 @@ const GreetingsForm = () => {
               }}
             />
           )}
+          {/* loading */}
+          {loading && <ActivityIndicator size="large" color={Colors.primary} />}
           {/* image */}
           <View style={styles.button}>
             <Button
@@ -138,6 +150,16 @@ const GreetingsForm = () => {
               onPress={handleSelectImage}>
               Select Image
             </Button>
+            {!validateImage && (
+              <Text
+                style={{
+                  color: Colors.danger,
+                  textAlign: 'center',
+                  marginTop: 5,
+                }}>
+                Image is required!
+              </Text>
+            )}
           </View>
           {/* video */}
           <View style={styles.button}>
@@ -147,6 +169,16 @@ const GreetingsForm = () => {
               onPress={handleSelectVideo}>
               Select Video
             </Button>
+            {!validateVideo && (
+              <Text
+                style={{
+                  color: Colors.danger,
+                  textAlign: 'center',
+                  marginTop: 5,
+                }}>
+                Video is required!
+              </Text>
+            )}
           </View>
           <View style={styles.button}>
             <Button
@@ -173,6 +205,11 @@ const GreetingsForm = () => {
               setOpen(false);
             }}
           />
+          {/* {date ? (
+            <Text>You selected: {date.toString()}</Text>
+          ) : (
+            <Text style={{color: 'red'}}>Please select a date</Text>
+          )} */}
         </View>
       </View>
 
@@ -197,6 +234,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   button: {
-    marginTop: 20,
+    paddingVertical: 10,
   },
 });
