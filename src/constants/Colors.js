@@ -5,5 +5,6 @@ export default Colors = {
   white: '#F0F0F0',
   danger: '#ee0f0f',
   darkBlue: '#2D2E43',
-  gray:'#818181'
+  gray: '#818181',
+  transparent: 'transparent',
 };

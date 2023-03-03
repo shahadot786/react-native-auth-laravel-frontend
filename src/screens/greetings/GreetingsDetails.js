@@ -24,8 +24,11 @@ const GreetingsDetails = ({route, navigation}) => {
         <BackArrow visibility={true} onPressBack={() => navigation.goBack()} />
       </View>
       <View style={styles.contentView}>
+        {/* title */}
         <Heading color={Colors.white}>{data.title}</Heading>
+        {/* descriptions */}
         <Text style={{color: Colors.gray}}>{data.descriptions}</Text>
+        {/* image */}
         {data.image ? (
           <Image
             source={{uri: data.image ? data.image : null}}
@@ -42,9 +45,30 @@ const GreetingsDetails = ({route, navigation}) => {
             style={{width: 300, height: 250}}
           />
         )}
-        <VideoPlayer videoUrl={data.video} />
-        <Text style={{color: Colors.white}}>{data.date}</Text>
-        <Text style={{color: Colors.white}}>{data.time}</Text>
+        {/* video */}
+        {data.video ? (
+          <VideoPlayer videoUrl={data.video} />
+        ) : (
+          <Text style={{color: Colors.white, fontSize: 16, fontWeight: 'bold'}}>
+            Video Not Found
+          </Text>
+        )}
+        {/* date */}
+        {data.date ? (
+          <Text style={{color: Colors.white}}>{data.date}</Text>
+        ) : (
+          <Text style={{color: Colors.white, fontSize: 14, fontWeight: '500'}}>
+            Date Not Found
+          </Text>
+        )}
+        {/* time */}
+        {data.time ? (
+          <Text style={{color: Colors.white}}>{data.time}</Text>
+        ) : (
+          <Text style={{color: Colors.white, fontSize: 14, fontWeight: '500'}}>
+            Time Not Found
+          </Text>
+        )}
       </View>
     </ScrollView>
   );

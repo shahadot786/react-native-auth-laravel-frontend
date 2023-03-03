@@ -1,21 +1,33 @@
-import {View, Image, ScrollView, StyleSheet, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import CustomInput from '../input/CustomInput';
 import Colors from '../../constants/Colors';
 import Button from '../buttons/Button';
-import DateTimePicker from '../DateTimePicker';
 import ImagePicker from 'react-native-image-crop-picker';
 import RouteName from '../../constants/RouteName';
 import {createGreetings} from '../../auth/auth';
 import {useNavigation} from '@react-navigation/native';
+import DatePicker from 'react-native-date-picker';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
   const navigation = useNavigation();
+
+  //convert the date time to local string
+  const updatedDate = date.toLocaleDateString();
+  const updatedTime = date.toLocaleTimeString();
 
   //pick images
   const handleSelectImage = async () => {
@@ -50,17 +62,10 @@ const GreetingsForm = () => {
     const {title, descriptions} = data;
     const image = selectedImage.path;
     const video = selectedVideo.path;
-    const date = '2023-03-02';
-    const time = '06:23:50';
+    const date = updatedDate;
+    const time = updatedTime;
     try {
-      await createGreetings(
-        title,
-        descriptions,
-        image,
-        video,
-        date,
-        time,
-      );
+      await createGreetings(title, descriptions, image, video, date, time);
       setLoading(false);
       navigation.replace(RouteName.allGreetings);
     } catch (error) {
@@ -126,28 +131,52 @@ const GreetingsForm = () => {
             />
           )}
           {/* image */}
-          <Button
-            backgroundColor={Colors.primary}
-            textColor={Colors.black}
-            onPress={handleSelectImage}>
-            Select Image
-          </Button>
+          <View style={styles.button}>
+            <Button
+              backgroundColor={Colors.transparent}
+              textColor={Colors.white}
+              onPress={handleSelectImage}>
+              Select Image
+            </Button>
+          </View>
           {/* video */}
           <View style={styles.button}>
             <Button
-              backgroundColor={Colors.primary}
-              textColor={Colors.black}
+              backgroundColor={Colors.transparent}
+              textColor={Colors.white}
               onPress={handleSelectVideo}>
               Select Video
             </Button>
           </View>
+          <View style={styles.button}>
+            <Button
+              onPress={() => setOpen(true)}
+              backgroundColor={Colors.transparent}
+              textColor={Colors.white}>
+              Select Date & Time
+            </Button>
+          </View>
+          {/* date picker */}
+          <DatePicker
+            modal
+            is24hourSource={false}
+            open={open}
+            date={date}
+            theme="dark"
+            onConfirm={date => {
+              setOpen(false);
+              setDate(date);
+              // console.log(date.toLocaleDateString());
+              // console.log(date.toLocaleTimeString());
+            }}
+            onCancel={() => {
+              setOpen(false);
+            }}
+          />
         </View>
       </View>
 
       {/* date time picker */}
-      <View>
-        <DateTimePicker />
-      </View>
       {/* Button */}
       <View style={styles.button}>
         <Button
@@ -168,6 +197,6 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
   },
   button: {
-    marginTop: 15,
+    marginTop: 20,
   },
 });

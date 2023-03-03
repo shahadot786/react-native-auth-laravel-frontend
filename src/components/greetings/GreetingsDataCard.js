@@ -87,7 +87,12 @@ const GreetingsDataCard = () => {
         />
       ) : (
         <View style={{justifyContent: 'center', alignItems: 'center', flex: 1}}>
-          <Heading color={Colors.gray}>No Greetings Found</Heading>
+          <Heading color={Colors.gray}>Greetings Not Found</Heading>
+          <Text
+            style={{color: Colors.primary, marginTop: 10}}
+            onPress={() => navigation.navigate(RouteName.createGreetings)}>
+            Create Greetings
+          </Text>
         </View>
       )}
     </View>
