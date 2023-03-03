@@ -25,7 +25,7 @@ const GreetingsForm = () => {
         height: 250,
         cropping: true,
       });
-      console.log(image);
+      //console.log(image);
       setSelectedImage(image);
     } catch (error) {
       console.log(error);
@@ -37,7 +37,7 @@ const GreetingsForm = () => {
       const video = await ImagePicker.openPicker({
         mediaType: 'video',
       });
-      console.log(video);
+      //console.log(video);
       setSelectedVideo(video);
     } catch (error) {
       console.log(error);
@@ -62,7 +62,7 @@ const GreetingsForm = () => {
         time,
       );
       setLoading(false);
-      navigation.navigate(RouteName.allGreetings);
+      navigation.replace(RouteName.allGreetings);
     } catch (error) {
       setLoading(false);
       console.log(error.message);

@@ -144,7 +144,7 @@ export const createGreetings = async (
       },
       onUploadProgress: progressEvent => {
         const progress = (progressEvent.loaded / progressEvent.total) * 100;
-        console.log(`Upload Progress: ${progress}%`);
+        //console.log(`Upload Progress: ${progress}%`);
         // Set the progress state here and update the UI accordingly
       },
     });

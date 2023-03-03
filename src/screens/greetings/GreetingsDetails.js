@@ -1,14 +1,23 @@
-import {StyleSheet, Text, View, ScrollView, Dimensions, Image} from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  Dimensions,
+  Image,
+} from 'react-native';
 import React from 'react';
 import Colors from '../../constants/Colors';
 import BackArrow from '../../components/BackArrow';
 import Heading from '../../components/Heading';
 import Images from '../../constants/Images';
+import VideoPlayer from '../../components/Video/VideoPlayer';
 
 const width = Dimensions.get('screen').width;
 
 const GreetingsDetails = ({route, navigation}) => {
   const data = route.params.greetingsData;
+  //console.log(data);
   return (
     <ScrollView style={styles.container}>
       <View>
@@ -21,7 +30,7 @@ const GreetingsDetails = ({route, navigation}) => {
           <Image
             source={{uri: data.image ? data.image : null}}
             style={{
-              width: width - 15,
+              width: width - 50,
               height: 250,
               borderRadius: 15,
               resizeMode: 'cover',
@@ -33,7 +42,7 @@ const GreetingsDetails = ({route, navigation}) => {
             style={{width: 300, height: 250}}
           />
         )}
-
+        <VideoPlayer videoUrl={data.video} />
         <Text style={{color: Colors.white}}>{data.date}</Text>
         <Text style={{color: Colors.white}}>{data.time}</Text>
       </View>
