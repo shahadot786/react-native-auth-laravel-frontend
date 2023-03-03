@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import api from '../api/api';
-import {createContext} from 'react';
+import {createContext, useState} from 'react';
 
 export const AuthContext = createContext();
 
@@ -124,19 +124,28 @@ export const createGreetings = async (
     const data = new FormData();
     data.append('title', title);
     data.append('descriptions', descriptions);
-    data.append('video', video);
     data.append('date', date);
     data.append('time', time);
     data.append('image', {
       uri: image,
-      type: 'image/jpg', // or your image mime type
+      type: 'image/jpeg', // or your image mime type
       name: image.split('/').pop(),
+    });
+    data.append('video', {
+      uri: video,
+      type: 'video/mp4', // or your video mime type
+      name: video.split('/').pop(), // or your video file name
     });
     const response = await api.post('/greetings', data, {
       headers: {
         Authorization: `Bearer ${token}`,
         'Content-Type': 'multipart/form-data',
         Accept: 'application/json',
+      },
+      onUploadProgress: progressEvent => {
+        const progress = (progressEvent.loaded / progressEvent.total) * 100;
+        console.log(`Upload Progress: ${progress}%`);
+        // Set the progress state here and update the UI accordingly
       },
     });
     //console.log(response);

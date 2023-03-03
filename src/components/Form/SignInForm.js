@@ -1,4 +1,10 @@
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useContext, useState} from 'react';
 import Button from '../../components/buttons/Button';
 import {useNavigation} from '@react-navigation/native';
@@ -7,7 +13,6 @@ import RouteName from '../../constants/RouteName';
 import CustomInput from '../../components/input/CustomInput';
 import {useForm} from 'react-hook-form';
 import {AuthContext, login} from '../../auth/auth';
-import {CirclesLoader} from 'react-native-indicator';
 
 const EMAIL_REGEX =
   /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/;
@@ -33,9 +38,7 @@ const SignInForm = () => {
   return (
     <View style={styles.input}>
       <View style={styles.loading}>
-        {isLoading && (
-          <CirclesLoader size={30} color={Colors.primary} dotRadius={5} />
-        )}
+        {isLoading && <ActivityIndicator size={30} color={Colors.primary} />}
       </View>
 
       <CustomInput

@@ -55,7 +55,9 @@ const GreetingsDataCard = () => {
                     />
                   )}
                 </View>
-                <Text style={{color: Colors.white}}>{item.date}</Text>
+                <Text style={{color: Colors.white, marginVertical: 2}}>
+                  {item.date}
+                </Text>
                 <Text style={{color: Colors.gray}}>{item.time}</Text>
               </View>
               {/* title/description */}
@@ -70,9 +72,10 @@ const GreetingsDataCard = () => {
                     color: Colors.gray,
                     fontSize: 13,
                     paddingRight: 120,
-                    lineHeight: 20,
+                    lineHeight: 18,
                     textTransform: 'capitalize',
                     marginTop: 5,
+                    textAlign: 'justify',
                   }}>
                   {item.descriptions?.length > 120
                     ? `${item.descriptions.slice(0, 120)}...`

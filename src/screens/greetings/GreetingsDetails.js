@@ -1,8 +1,7 @@
-import {StyleSheet, Text, View, ScrollView, Dimensions} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, Dimensions, Image} from 'react-native';
 import React from 'react';
 import Colors from '../../constants/Colors';
 import BackArrow from '../../components/BackArrow';
-import {Image} from 'react-native-animatable';
 import Heading from '../../components/Heading';
 import Images from '../../constants/Images';
 

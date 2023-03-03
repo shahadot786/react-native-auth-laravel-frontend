@@ -1,4 +1,4 @@
-import {View, StyleSheet} from 'react-native';
+import {View, StyleSheet, ActivityIndicator} from 'react-native';
 import React, {useContext, useState} from 'react';
 import CustomInput from '../input/CustomInput';
 import {useForm} from 'react-hook-form';
@@ -6,7 +6,6 @@ import Button from '../buttons/Button';
 import {useNavigation} from '@react-navigation/native';
 import RouteName from '../../constants/RouteName';
 import {AuthContext, register} from '../../auth/auth';
-import {CirclesLoader} from 'react-native-indicator';
 import Colors from '../../constants/Colors';
 
 const EMAIL_REGEX =
@@ -37,7 +36,7 @@ const SignUpForm = () => {
     <View style={styles.input}>
       <View style={styles.loading}>
         {isLoading && (
-          <CirclesLoader size={30} color={Colors.primary} dotRadius={5} />
+          <ActivityIndicator size={30} color={Colors.primary} />
         )}
       </View>
       <CustomInput
