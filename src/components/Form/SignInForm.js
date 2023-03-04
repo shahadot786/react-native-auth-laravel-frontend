@@ -60,8 +60,8 @@ const SignInForm = () => {
         rules={{
           required: 'Password is required',
           minLength: {
-            value: 8,
-            message: 'Password should minimum 8 characters long',
+            value: 3,
+            message: 'Password should minimum 3 characters long',
           },
         }}
       />

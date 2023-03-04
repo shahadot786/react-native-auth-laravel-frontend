@@ -8,6 +8,7 @@ import MenuScreen from '../screens/home/MenuScreen';
 import Colors from '../constants/Colors';
 import RouteName from '../constants/RouteName';
 import * as Animatable from 'react-native-animatable';
+import VideoScreen from '../screens/home/VideoScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -71,7 +72,7 @@ const TabNavigation = () => {
         component={NotificationScreen}
         options={{
           tabBarLabel: '',
-          tabBarIcon: ({focused,color}) => {
+          tabBarIcon: ({focused, color}) => {
             return (
               <Animatable.View
                 animation={focused ? 'pulse' : null}
@@ -102,7 +103,7 @@ const TabNavigation = () => {
         component={MenuScreen}
         options={{
           tabBarLabel: '',
-          tabBarIcon: ({focused,color}) => {
+          tabBarIcon: ({focused, color}) => {
             return (
               <Animatable.View
                 animation={focused ? 'pulse' : null}
@@ -122,6 +123,37 @@ const TabNavigation = () => {
                     justifyContent: 'center',
                   }}>
                   Menu
+                </Text>
+              </Animatable.View>
+            );
+          },
+        }}
+      />
+      <Tab.Screen
+        name={RouteName.video}
+        component={VideoScreen}
+        options={{
+          tabBarLabel: '',
+          tabBarIcon: ({focused, color}) => {
+            return (
+              <Animatable.View
+                animation={focused ? 'pulse' : null}
+                iterationCount="infinite"
+                style={{
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  top: 1,
+                }}>
+                <Icon name="play-circle" color={color} size={26} />
+                <Text
+                  className="items-center justify-center"
+                  style={{
+                    color: color,
+                    fontSize: 12,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  Video
                 </Text>
               </Animatable.View>
             );

@@ -9,4 +9,5 @@ export default RouteName = {
   allGreetings: 'AllGreetings',
   createGreetings: 'CreateGreetings',
   detailsGreetings: 'GreetingDetails',
+  video: 'VideoScreen',
 };
