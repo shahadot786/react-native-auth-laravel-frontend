@@ -4,6 +4,8 @@ import {Text} from 'react-native-animatable';
 import ImagePicker from 'react-native-image-crop-picker';
 import RNFetchBlob from 'rn-fetch-blob';
 import {getToken} from '../auth/auth';
+import * as Progress from 'react-native-progress';
+import Colors from '../constants/Colors';
 
 const UPLOAD_API_ENDPOINT = 'http://10.0.2.2:8000/api/upload-video';
 
@@ -12,6 +14,7 @@ const VideoUploadScreen = () => {
   const [progress, setProgress] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
   const [currentSize, setCurrentSize] = useState(0);
+  const [progressBar, setProgressBar] = useState(0);
 
   //select video function
   async function handleUploadVideo() {
@@ -47,6 +50,7 @@ const VideoUploadScreen = () => {
         {
           'Content-Type': 'multipart/form-data',
           Authorization: `Bearer ${token}`,
+          timeout: 60000,
         },
         [
           {
@@ -59,10 +63,12 @@ const VideoUploadScreen = () => {
       ) // listen to upload progress event
         .uploadProgress((written, total) => {
           //   console.log('uploaded', written / total);
+          const progress = written / total;
           current = written;
           setProgress(Math.round((written / total) * 100));
           setTotalSize(total);
           setCurrentSize(current);
+          setProgressBar(progress);
         });
       // // listen to download progress event
       // .progress((received, total) => {
@@ -82,8 +88,8 @@ const VideoUploadScreen = () => {
       } else if (err.message === 'Network request failed') {
         // network error
       } else if (err.message === 'Stream closed') {
-        // handle stream closed error
-        console.log('Stream closed error');
+        console.log('Stream closed error, retrying upload...');
+        await uploadVideo(title, descriptions, image, video, date, time); // retry the upload
 
         // display error message to user and give them the option to retry the upload
       } else {
@@ -124,6 +130,7 @@ const VideoUploadScreen = () => {
           </Text>
         </View>
       )}
+      <Progress.Bar progress={0.5} width={200} height={10} color={'blue'} />
     </View>
   );
 };

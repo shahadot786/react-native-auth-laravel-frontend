@@ -12,10 +12,12 @@ import Colors from '../../constants/Colors';
 import Button from '../buttons/Button';
 import ImagePicker from 'react-native-image-crop-picker';
 import RouteName from '../../constants/RouteName';
-import {createGreetings} from '../../auth/auth';
 import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {Text} from 'react-native-animatable';
+import RNFetchBlob from 'rn-fetch-blob';
+import {getToken} from '../../auth/auth';
+import * as Progress from 'react-native-progress';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
@@ -27,6 +29,12 @@ const GreetingsForm = () => {
   //validate image video date time
   const [validateImage, setValidateImage] = useState(true);
   const [validateVideo, setValidateVideo] = useState(true);
+  //sate for video
+  const [progress, setProgress] = useState(0);
+  const [totalSize, setTotalSize] = useState(0);
+  const [currentSize, setCurrentSize] = useState(0);
+   const [progressBar, setProgressBar] = useState(0);
+  //navigation
   const navigation = useNavigation();
   //convert the date time to local string
   const updatedDate = date.toLocaleDateString();
@@ -52,6 +60,8 @@ const GreetingsForm = () => {
     try {
       const video = await ImagePicker.openPicker({
         mediaType: 'video',
+        compressVideoPreset: 'MediumQuality',
+        includeBase64: false,
       });
       //console.log(video);
       setSelectedVideo(video);
@@ -72,16 +82,90 @@ const GreetingsForm = () => {
     setLoading(true);
     const {title, descriptions} = data;
     const image = selectedImage.path;
-    const video = selectedVideo.path;
+    const video = selectedVideo;
     const date = updatedDate;
     const time = updatedTime;
+
     try {
-      await createGreetings(title, descriptions, image, video, date, time);
+      await uploadVideo(title, descriptions, image, video, date, time);
       setLoading(false);
       navigation.replace(RouteName.allGreetings);
     } catch (error) {
       setLoading(false);
       console.log(error.message);
+    }
+  };
+  //upload video function
+  const uploadVideo = async (title, descriptions, image, video, date, time) => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        return null;
+      } // replace with your API token
+      const apiUrl = 'http://10.0.2.2:8000/api/greetings';
+      const fileName = video.path.split('/').pop();
+      let current = 0;
+
+      const uploadResponse = await RNFetchBlob.fetch(
+        'POST',
+        apiUrl,
+        {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+        [
+          {name: 'title', data: title},
+          {name: 'descriptions', data: descriptions},
+          {
+            name: 'video',
+            filename: fileName,
+            type: video.mime,
+            data: RNFetchBlob.wrap(video.path),
+          },
+          {
+            name: 'image',
+            filename: image.split('/').pop(),
+            type: 'image/jpeg',
+            data: RNFetchBlob.wrap(image),
+          },
+          {name: 'date', data: date},
+          {name: 'time', data: time},
+        ],
+      ) // listen to upload progress event
+        .uploadProgress((written, total) => {
+          //   console.log('uploaded', written / total);
+          const progress = written / total;
+          current = written;
+          setProgressBar(progress);
+          setProgress(Math.round((written / total) * 100));
+          setTotalSize(total);
+          setCurrentSize(current);
+        });
+      // // listen to download progress event
+      // .progress((received, total) => {
+      //   console.log('progress', received / total);
+      // });
+
+      const responseData = JSON.parse(uploadResponse.data);
+      console.log(responseData);
+      // handle the server response
+    } catch (err) {
+      console.log(err);
+
+      if (RNFetchBlob.isCancelled(err)) {
+        // user cancelled the upload
+      } else if (RNFetchBlob.sessionExpired(err)) {
+        // session expired, log out user
+      } else if (err.message === 'Network request failed') {
+        // network error
+      } else if (err.message === 'Stream closed') {
+        // handle stream closed error
+        console.log('Stream closed error');
+
+        // display error message to user and give them the option to retry the upload
+      } else {
+        // other error
+      }
     }
   };
 
@@ -141,7 +225,34 @@ const GreetingsForm = () => {
             />
           )}
           {/* loading */}
-          {loading && <ActivityIndicator size="large" color={Colors.primary} />}
+          {loading && (
+            <View
+              style={{justifyContent: 'center', alignItems: 'center', gap: 15}}>
+              {/* <ActivityIndicator size="large" color={Colors.primary} /> */}
+              <Progress.Bar
+                progress={progressBar}
+                width={200}
+                height={10}
+                color={Colors.primary}
+              />
+              <Text
+                style={{
+                  color: Colors.primary,
+                  fontSize: 20,
+                  marginTop: 5,
+                  fontWeight: 'bold',
+                }}>
+                {Math.round(progress)}%
+              </Text>
+              {/* <Text style={{color: Colors.white, fontSize: 20}}>
+                Size: {(totalSize / 1000000).toFixed(2)} MB
+              </Text> */}
+              <Text style={{color: Colors.green, fontSize: 15}}>
+                Uploaded:{(totalSize / 1000000).toFixed(2)} MB /{' '}
+                {(currentSize / 1000000).toFixed(2)} MB
+              </Text>
+            </View>
+          )}
           {/* image */}
           <View style={styles.button}>
             <Button
