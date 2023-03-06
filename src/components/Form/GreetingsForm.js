@@ -411,7 +411,7 @@ const GreetingsForm = () => {
             <TouchableOpacity activeOpacity={0.6} onPress={handleCameraVideo}>
               <Icon name="camera" size={22} color={Colors.white} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectImage}>
+            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectVideo}>
               <Icon name="video-camera" size={22} color={Colors.white} />
             </TouchableOpacity>
             {!validateVideo && (
