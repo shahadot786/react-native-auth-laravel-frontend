@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableWithoutFeedback,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import Video from 'react-native-video';
 import Colors from '../../constants/Colors';
@@ -14,7 +15,7 @@ import Slider from '@react-native-community/slider';
 
 const width = Dimensions.get('screen').width;
 
-const VideoPlayer = ({videoUrl}) => {
+const VideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -54,6 +55,16 @@ const VideoPlayer = ({videoUrl}) => {
         onProgress={handleProgress}
         paused={!isPlaying}
       />
+      {/* cancel button */}
+      {isCancel && (
+        <TouchableOpacity
+          onPress={onCancelPress}
+          style={styles.cancelBtn}
+          activeOpacity={0.6}>
+          <Icon name="cancel" size={30} color={Colors.primary} />
+        </TouchableOpacity>
+      )}
+
       {isLoading && (
         <View style={styles.loading}>
           <ActivityIndicator size={30} color={Colors.primary} />
@@ -163,6 +174,14 @@ const styles = StyleSheet.create({
   slider: {
     flex: 1,
     height: 25,
+  },
+  cancelBtn: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    marginRight: 5,
+    marginTop: 5,
+    zIndex: 111111,
   },
 });
 

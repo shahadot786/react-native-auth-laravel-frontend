@@ -21,6 +21,7 @@ import {getToken} from '../../auth/auth';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import VideoPlayer from '../Video/VideoPlayer';
+import axios from 'axios';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
@@ -39,6 +40,8 @@ const GreetingsForm = () => {
   const [totalSize, setTotalSize] = useState(0);
   const [currentSize, setCurrentSize] = useState(0);
   const [progressBar, setProgressBar] = useState(0);
+  //get the current video data
+  const [currentVideoData, setCurrentVideoData] = useState();
   //navigation
   const navigation = useNavigation();
   //convert the date time to local string
@@ -156,7 +159,7 @@ const GreetingsForm = () => {
       await RNFetchBlob.fs.unlink(video.path);
       //return response
       const responseData = JSON.parse(uploadResponse.data);
-      console.log(responseData);
+      setCurrentVideoData(responseData);
       // handle the server response
     } catch (err) {
       console.log(err);
@@ -177,6 +180,35 @@ const GreetingsForm = () => {
         // other error
         console.log('Other Errors');
       }
+    }
+  };
+  //cancel button handler
+  const cancelHandler = async () => {
+    const videoId = currentVideoData.videos.id;
+    const apiUrl = 'http://10.0.2.2:8000/api/videos';
+
+    try {
+      const token = await getToken();
+      if (!token) {
+        return null;
+      }
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+      await axios
+        .delete(`${apiUrl}/${videoId}`, config)
+        .then(response => {
+          console.log('Resource deleted:', response.data);
+        })
+        .catch(error => {
+          console.error('Error deleting resource:', error);
+        });
+
+      setPreviewVideo(false);
+    } catch (error) {
+      console.log(error);
     }
   };
   // const uploadVideo = async (title, descriptions, image, video, date, time) => {
@@ -351,7 +383,9 @@ const GreetingsForm = () => {
           {/* preview video */}
           {previewVideo && (
             <VideoPlayer
-              videoUrl={'http://10.0.2.2:8000/videos/1678074979.mp4'}
+              isCancel
+              onCancelPress={cancelHandler}
+              videoUrl={currentVideoData.videos.video}
             />
           )}
           {videoLoading && (
