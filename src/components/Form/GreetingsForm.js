@@ -90,6 +90,46 @@ const GreetingsForm = () => {
       console.log(error);
     }
   };
+  //pick camera for image
+  const handleCameraImage = async () => {
+    try {
+      const image = await ImagePicker.openCamera({
+        width: 300,
+        height: 250,
+        cropping: true,
+      });
+      setSelectedImage(image);
+      setValidateImage(true);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //pick camera for video
+  const handleCameraVideo = async () => {
+    try {
+      const video = await ImagePicker.openCamera({
+        mediaType: 'video',
+        compressVideoPreset: 'LowQuality',
+        includeBase64: false,
+      });
+      //console.log(video);
+      setValidateVideo(true);
+      setSelectedVideo(video);
+      setVideoLoading(true);
+      //upload video
+      try {
+        await uploadVideo(video);
+        setVideoLoading(false);
+        setPreviewVideo(true);
+      } catch (error) {
+        setVideoLoading(false);
+        setPreviewVideo(false);
+        console.log(error.message);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   //upload video function
   const uploadVideo = async video => {
     try {
@@ -200,7 +240,7 @@ const GreetingsForm = () => {
       await axios
         .delete(`${apiUrl}/${videoId}`, config)
         .then(response => {
-          console.log('Resource deleted:', response.data);
+          //console.log('Resource deleted:', response.data);
         })
         .catch(error => {
           console.error('Error deleting resource:', error);
@@ -265,7 +305,7 @@ const GreetingsForm = () => {
       // delete cached video file
       //return response
       const responseData = JSON.parse(uploadResponse.data);
-      console.log(responseData);
+      //console.log(responseData);
       // handle the server response
     } catch (err) {
       console.log(err);
@@ -336,8 +376,11 @@ const GreetingsForm = () => {
           {/* image */}
           <View style={[styles.button, styles.rowView]}>
             <Text style={{color: Colors.primary}}>Select Image:</Text>
+            <TouchableOpacity activeOpacity={0.6} onPress={handleCameraImage}>
+              <Icon name="camera" size={22} color={Colors.white} />
+            </TouchableOpacity>
             <TouchableOpacity activeOpacity={0.6} onPress={handleSelectImage}>
-              <Icon name="image" size={25} color={Colors.white} />
+              <Icon name="image" size={22} color={Colors.white} />
             </TouchableOpacity>
             {!validateImage && (
               <Text
@@ -365,8 +408,11 @@ const GreetingsForm = () => {
           {/* video */}
           <View style={[styles.button, styles.rowView]}>
             <Text style={{color: Colors.primary}}>Select Video:</Text>
-            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectVideo}>
-              <Icon name="video-camera" size={25} color={Colors.white} />
+            <TouchableOpacity activeOpacity={0.6} onPress={handleCameraVideo}>
+              <Icon name="camera" size={22} color={Colors.white} />
+            </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectImage}>
+              <Icon name="video-camera" size={22} color={Colors.white} />
             </TouchableOpacity>
             {!validateVideo && (
               <Text
@@ -422,7 +468,7 @@ const GreetingsForm = () => {
           <View style={[styles.button, styles.rowView]}>
             <Text style={{color: Colors.primary}}>Select Date & Time:</Text>
             <TouchableOpacity activeOpacity={0.6} onPress={() => setOpen(true)}>
-              <Icon name="calendar" size={25} color={Colors.white} />
+              <Icon name="calendar" size={22} color={Colors.white} />
             </TouchableOpacity>
             {date && (
               <>
