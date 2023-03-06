@@ -46,8 +46,8 @@ const GreetingsDetails = ({route, navigation}) => {
           />
         )}
         {/* video */}
-        {data.video ? (
-          <VideoPlayer videoUrl={data.video} />
+        {data.video_url ? (
+          <VideoPlayer videoUrl={data.video_url} />
         ) : (
           <Text style={{color: Colors.white, fontSize: 16, fontWeight: 'bold'}}>
             Video Not Found

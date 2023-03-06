@@ -90,31 +90,6 @@ const GreetingsForm = () => {
       console.log(error);
     }
   };
-  const onSubmitHandler = async data => {
-    //console.log(data);
-    //console.log(selectedImage.path);
-    //validate the image and video
-    if (selectedImage == null) {
-      return setValidateImage(false);
-    } else if (selectedVideo == null) {
-      return setValidateVideo(false);
-    }
-    setLoading(true);
-    const {title, descriptions} = data;
-    const image = selectedImage.path;
-    const video = selectedVideo;
-    const date = updatedDate;
-    const time = updatedTime;
-
-    try {
-      await uploadVideo(title, descriptions, image, video, date, time);
-      setLoading(false);
-      navigation.replace(RouteName.allGreetings);
-    } catch (error) {
-      setLoading(false);
-      console.log(error.message);
-    }
-  };
   //upload video function
   const uploadVideo = async video => {
     try {
@@ -182,6 +157,31 @@ const GreetingsForm = () => {
       }
     }
   };
+  const onSubmitHandler = async data => {
+    //console.log(data);
+    //console.log(selectedImage.path);
+    //validate the image and video
+    if (selectedImage == null) {
+      return setValidateImage(false);
+    } else if (selectedVideo == null) {
+      return setValidateVideo(false);
+    }
+    setLoading(true);
+    const {title, descriptions} = data;
+    const image = selectedImage.path;
+    const video_url = currentVideoData.videos.video;
+    const date = updatedDate;
+    const time = updatedTime;
+
+    try {
+      await uploadData(title, descriptions, image, video_url, date, time);
+      setLoading(false);
+      navigation.replace(RouteName.allGreetings);
+    } catch (error) {
+      setLoading(false);
+      console.log(error.message);
+    }
+  };
   //cancel button handler
   const cancelHandler = async () => {
     const videoId = currentVideoData.videos.id;
@@ -211,82 +211,83 @@ const GreetingsForm = () => {
       console.log(error);
     }
   };
-  // const uploadVideo = async (title, descriptions, image, video, date, time) => {
-  //   try {
-  //     const token = await getToken();
-  //     if (!token) {
-  //       return null;
-  //     } // replace with your API token
-  //     const apiUrl = 'http://10.0.2.2:8000/api/greetings';
-  //     const fileName = video.path.split('/').pop();
-  //     let current = 0;
+  //submit all data
+  const uploadData = async (
+    title,
+    descriptions,
+    image,
+    video_url,
+    date,
+    time,
+  ) => {
+    try {
+      const token = await getToken();
+      if (!token) {
+        return null;
+      } // replace with your API token
+      const apiUrl = 'http://10.0.2.2:8000/api/greetings';
+      let current = 0;
 
-  //     const uploadResponse = await RNFetchBlob.fetch(
-  //       'POST',
-  //       apiUrl,
-  //       {
-  //         'Content-Type': 'multipart/form-data',
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       [
-  //         {name: 'title', data: title},
-  //         {name: 'descriptions', data: descriptions},
-  //         {
-  //           name: 'video',
-  //           filename: fileName,
-  //           type: video.mime,
-  //           data: RNFetchBlob.wrap(video.path),
-  //         },
-  //         {
-  //           name: 'image',
-  //           filename: image.split('/').pop(),
-  //           type: 'image/jpeg',
-  //           data: RNFetchBlob.wrap(image),
-  //         },
-  //         {name: 'date', data: date},
-  //         {name: 'time', data: time},
-  //       ],
-  //     ) // listen to upload progress event
-  //       .uploadProgress((written, total) => {
-  //         //   console.log('uploaded', written / total);
-  //         const progress = written / total;
-  //         current = written;
-  //         setProgressBar(progress);
-  //         setProgress(Math.round((written / total) * 100));
-  //         setTotalSize(total);
-  //         setCurrentSize(current);
-  //       });
-  //     // // listen to download progress event
-  //     // .progress((received, total) => {
-  //     //   console.log('progress', received / total);
-  //     // });
-  //     // delete cached video file
-  //     await RNFetchBlob.fs.unlink(video.path);
-  //     //return response
-  //     const responseData = JSON.parse(uploadResponse.data);
-  //     console.log(responseData);
-  //     // handle the server response
-  //   } catch (err) {
-  //     console.log(err);
+      const uploadResponse = await RNFetchBlob.fetch(
+        'POST',
+        apiUrl,
+        {
+          'Content-Type': 'multipart/form-data',
+          Authorization: `Bearer ${token}`,
+        },
+        [
+          {name: 'title', data: title},
+          {name: 'descriptions', data: descriptions},
+          {name: 'video_url', data: video_url},
+          {
+            name: 'image',
+            filename: image.split('/').pop(),
+            type: 'image/jpeg',
+            data: RNFetchBlob.wrap(image),
+          },
+          {name: 'date', data: date},
+          {name: 'time', data: time},
+        ],
+      ) // listen to upload progress event
+        .uploadProgress((written, total) => {
+          //   console.log('uploaded', written / total);
+          const progress = written / total;
+          current = written;
+          setProgressBar(progress);
+          setProgress(Math.round((written / total) * 100));
+          setTotalSize(total);
+          setCurrentSize(current);
+        });
+      // // listen to download progress event
+      // .progress((received, total) => {
+      //   console.log('progress', received / total);
+      // });
+      // delete cached video file
+      //return response
+      const responseData = JSON.parse(uploadResponse.data);
+      console.log(responseData);
+      // handle the server response
+    } catch (err) {
+      console.log(err);
 
-  //     if (RNFetchBlob.isCancelled(err)) {
-  //       // user cancelled the upload
-  //     } else if (RNFetchBlob.sessionExpired(err)) {
-  //       // session expired, log out user
-  //     } else if (err.message === 'Network request failed') {
-  //       // network error
-  //       console.log('Network Error!');
-  //     } else if (err.message === 'Stream closed') {
-  //       // handle stream closed error
-  //       console.log('Stream closed error');
+      if (RNFetchBlob.isCancelled(err)) {
+        // user cancelled the upload
+      } else if (RNFetchBlob.sessionExpired(err)) {
+        // session expired, log out user
+      } else if (err.message === 'Network request failed') {
+        // network error
+        console.log('Network Error!');
+      } else if (err.message === 'Stream closed') {
+        // handle stream closed error
+        console.log('Stream closed error');
 
-  //       // display error message to user and give them the option to retry the upload
-  //     } else {
-  //       // other error
-  //       console.log('Other Errors');
-  //     }
-  //   }
-  // };
+        // display error message to user and give them the option to retry the upload
+      } else {
+        // other error
+        console.log('Other Errors');
+      }
+    }
+  };
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -445,15 +446,11 @@ const GreetingsForm = () => {
               setOpen(false);
             }}
           />
-          {/* {date ? (
-            <Text>You selected: {date.toString()}</Text>
-          ) : (
-            <Text style={{color: 'red'}}>Please select a date</Text>
-          )} */}
         </View>
       </View>
 
-      {/* date time picker */}
+      {/* loading */}
+      {loading && <ActivityIndicator size={24} color={Colors.primary} />}
       {/* Button */}
       <View
         style={[
