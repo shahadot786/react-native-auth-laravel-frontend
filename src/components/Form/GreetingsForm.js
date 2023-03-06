@@ -4,6 +4,7 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
@@ -18,12 +19,15 @@ import {Text} from 'react-native-animatable';
 import RNFetchBlob from 'rn-fetch-blob';
 import {getToken} from '../../auth/auth';
 import * as Progress from 'react-native-progress';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import VideoPlayer from '../Video/VideoPlayer';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [videoLoading, setVideoLoading] = useState(false);
   const [date, setDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   //validate image video date time
@@ -33,7 +37,7 @@ const GreetingsForm = () => {
   const [progress, setProgress] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
   const [currentSize, setCurrentSize] = useState(0);
-   const [progressBar, setProgressBar] = useState(0);
+  const [progressBar, setProgressBar] = useState(0);
   //navigation
   const navigation = useNavigation();
   //convert the date time to local string
@@ -60,12 +64,15 @@ const GreetingsForm = () => {
     try {
       const video = await ImagePicker.openPicker({
         mediaType: 'video',
-        compressVideoPreset: 'MediumQuality',
+        compressVideoPreset: 'LowQuality',
         includeBase64: false,
       });
       //console.log(video);
-      setSelectedVideo(video);
       setValidateVideo(true);
+      setSelectedVideo(video);
+      setVideoLoading(true);
+      //upload video
+      //preview video
     } catch (error) {
       console.log(error);
     }
@@ -145,7 +152,9 @@ const GreetingsForm = () => {
       // .progress((received, total) => {
       //   console.log('progress', received / total);
       // });
-
+      // delete cached video file
+      await RNFetchBlob.fs.unlink(video.path);
+      //return response
       const responseData = JSON.parse(uploadResponse.data);
       console.log(responseData);
       // handle the server response
@@ -158,6 +167,7 @@ const GreetingsForm = () => {
         // session expired, log out user
       } else if (err.message === 'Network request failed') {
         // network error
+        console.log('Network Error!');
       } else if (err.message === 'Stream closed') {
         // handle stream closed error
         console.log('Stream closed error');
@@ -165,6 +175,7 @@ const GreetingsForm = () => {
         // display error message to user and give them the option to retry the upload
       } else {
         // other error
+        console.log('Other Errors');
       }
     }
   };
@@ -212,7 +223,25 @@ const GreetingsForm = () => {
       </View>
       {/* image picker */}
       <View>
-        <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <View style={{flex: 1}}>
+          {/* image */}
+          <View style={[styles.button, styles.rowView]}>
+            <Text style={{color: Colors.primary}}>Select Image:</Text>
+            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectImage}>
+              <Icon name="image" size={25} color={Colors.white} />
+            </TouchableOpacity>
+            {!validateImage && (
+              <Text
+                style={{
+                  color: Colors.danger,
+                  textAlign: 'center',
+                  marginTop: 5,
+                }}>
+                Image is required!
+              </Text>
+            )}
+          </View>
+          {/* image preview */}
           {selectedImage && (
             <Image
               source={{uri: selectedImage.path}}
@@ -224,10 +253,34 @@ const GreetingsForm = () => {
               }}
             />
           )}
-          {/* loading */}
-          {loading && (
+          {/* video */}
+          <View style={[styles.button, styles.rowView]}>
+            <Text style={{color: Colors.primary}}>Select Video:</Text>
+            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectVideo}>
+              <Icon name="video-camera" size={25} color={Colors.white} />
+            </TouchableOpacity>
+            {!validateVideo && (
+              <Text
+                style={{
+                  color: Colors.danger,
+                  textAlign: 'center',
+                  marginTop: 5,
+                }}>
+                Video is required!
+              </Text>
+            )}
+          </View>
+          {/* video loading */}
+          {/* video preview after loading finished*/}
+          {/* preview video */}
+          {videoLoading && (
+            <VideoPlayer
+              videoUrl={'http://10.0.2.2:8000/videos/1678074979.mp4'}
+            />
+          )}
+          {videoLoading && (
             <View
-              style={{justifyContent: 'center', alignItems: 'center', gap: 15}}>
+              style={{gap: 15, justifyContent: 'center', alignItems: 'center'}}>
               {/* <ActivityIndicator size="large" color={Colors.primary} /> */}
               <Progress.Bar
                 progress={progressBar}
@@ -253,61 +306,19 @@ const GreetingsForm = () => {
               </Text>
             </View>
           )}
-          {/* image */}
-          <View style={styles.button}>
-            <Button
-              backgroundColor={Colors.transparent}
-              textColor={Colors.white}
-              onPress={handleSelectImage}>
-              Select Image
-            </Button>
-            {!validateImage && (
-              <Text
-                style={{
-                  color: Colors.danger,
-                  textAlign: 'center',
-                  marginTop: 5,
-                }}>
-                Image is required!
-              </Text>
+
+          {/* date and time */}
+          <View style={[styles.button, styles.rowView]}>
+            <Text style={{color: Colors.primary}}>Select Date & Time:</Text>
+            <TouchableOpacity activeOpacity={0.6} onPress={() => setOpen(true)}>
+              <Icon name="calendar" size={25} color={Colors.white} />
+            </TouchableOpacity>
+            {date && (
+              <>
+                <Text style={{color: Colors.white}}>{updatedDate}</Text>
+                <Text style={{color: Colors.white}}>{updatedTime}</Text>
+              </>
             )}
-          </View>
-          {/* video */}
-          <View style={styles.button}>
-            <Button
-              backgroundColor={Colors.transparent}
-              textColor={Colors.white}
-              onPress={handleSelectVideo}>
-              Select Video
-            </Button>
-            {!validateVideo && (
-              <Text
-                style={{
-                  color: Colors.danger,
-                  textAlign: 'center',
-                  marginTop: 5,
-                }}>
-                Video is required!
-              </Text>
-            )}
-            {selectedVideo && (
-              <Text
-                style={{
-                  color: Colors.green,
-                  textAlign: 'center',
-                  marginTop: 5,
-                }}>
-                Video is selected
-              </Text>
-            )}
-          </View>
-          <View style={styles.button}>
-            <Button
-              onPress={() => setOpen(true)}
-              backgroundColor={Colors.transparent}
-              textColor={Colors.white}>
-              Select Date & Time
-            </Button>
           </View>
           {/* date picker */}
           <DatePicker
@@ -319,8 +330,6 @@ const GreetingsForm = () => {
             onConfirm={date => {
               setOpen(false);
               setDate(date);
-              // console.log(date.toLocaleDateString());
-              // console.log(date.toLocaleTimeString());
             }}
             onCancel={() => {
               setOpen(false);
@@ -336,7 +345,11 @@ const GreetingsForm = () => {
 
       {/* date time picker */}
       {/* Button */}
-      <View style={styles.button}>
+      <View
+        style={[
+          styles.button,
+          {justifyContent: 'center', alignItems: 'center', marginVertical: 15},
+        ]}>
         <Button
           backgroundColor={Colors.primary}
           textColor={Colors.black}
@@ -356,5 +369,9 @@ const styles = StyleSheet.create({
   },
   button: {
     paddingVertical: 10,
+  },
+  rowView: {
+    flexDirection: 'row',
+    gap: 20,
   },
 });

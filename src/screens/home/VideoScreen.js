@@ -4,8 +4,8 @@ import VideoUploadScreen from '../../util/VideoUploadScreen';
 
 const VideoScreen = () => {
   return (
-    <View style={{flex:1,justifyContent:'center'}}>
-      <VideoUploadScreen/>
+    <View style={{flex: 1, justifyContent: 'center'}}>
+      <Text>Video Screen</Text>
     </View>
   );
 };

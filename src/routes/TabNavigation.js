@@ -66,7 +66,6 @@ const TabNavigation = () => {
           },
         }}
       />
-      {/* <Tab.Screen name="Featured" component={Featured} /> */}
       <Tab.Screen
         name={RouteName.notification}
         component={NotificationScreen}
