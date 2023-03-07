@@ -12,6 +12,7 @@ import CreateGreetings from '../screens/greetings/CreateGreetings';
 import GreetingsDetails from '../screens/greetings/GreetingsDetails';
 import {View} from 'react-native';
 import Spinner from '../components/spinner/Spinner';
+import VideoCropperScreen from '../screens/greetings/VideoCropperScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -70,6 +71,11 @@ const NavigationHome = () => {
               <Stack.Screen
                 name={RouteName.detailsGreetings}
                 component={GreetingsDetails}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name={RouteName.cropper}
+                component={VideoCropperScreen}
                 options={{headerShown: false}}
               />
             </>

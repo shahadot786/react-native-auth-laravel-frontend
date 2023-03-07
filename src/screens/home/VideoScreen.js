@@ -1,6 +1,5 @@
 import {StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import VideoUploadScreen from '../../util/VideoUploadScreen';
 
 const VideoScreen = () => {
   return (

@@ -238,15 +238,23 @@ const GreetingsForm = () => {
           </View>
           {/* image preview */}
           {selectedImage && (
-            <Image
-              source={{uri: selectedImage.path}}
-              style={{
-                width: 350,
-                height: 250,
-                marginVertical: 15,
-                borderRadius: 15,
-              }}
-            />
+            <>
+              <Image
+                source={{uri: selectedImage.path}}
+                style={{
+                  width: 350,
+                  height: 250,
+                  marginVertical: 15,
+                  borderRadius: 15,
+                }}
+              />
+              {/* <TouchableOpacity
+                onPress={cancelHandler}
+                style={styles.cancelBtn}
+                activeOpacity={0.6}>
+                <Icon name="close" size={30} color={Colors.primary} />
+              </TouchableOpacity> */}
+            </>
           )}
           {/* video */}
           <View style={[styles.button, styles.rowView]}>
@@ -369,5 +377,13 @@ const styles = StyleSheet.create({
   rowView: {
     flexDirection: 'row',
     gap: 20,
+  },
+  cancelBtn: {
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    marginRight: 5,
+    marginTop: 5,
+    zIndex: 111111,
   },
 });

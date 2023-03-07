@@ -25,7 +25,6 @@ export const uploadData = async (
       name: image.split('/').pop(),
       type: 'image/jpeg',
     });
-    console.log(formData);
     const response = await api.post(`/greetings/${id}?_method=PUT`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
