@@ -16,12 +16,16 @@ import RouteName from '../../constants/RouteName';
 import {useNavigation} from '@react-navigation/native';
 import DatePicker from 'react-native-date-picker';
 import {Text} from 'react-native-animatable';
-import RNFetchBlob from 'rn-fetch-blob';
-import {getToken} from '../../auth/auth';
 import * as Progress from 'react-native-progress';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import VideoPlayer from '../Video/VideoPlayer';
-import axios from 'axios';
+import {uploadData} from '../../services/GreetingsFormData';
+import {
+  CancelVideoHandler,
+  SelectCameraImage,
+  SelectGalleryImage,
+} from '../../services/ResourceSelection';
+import {uploadVideo} from '../../services/UploadVideo';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
@@ -49,22 +53,23 @@ const GreetingsForm = () => {
   const updatedTime = date.toLocaleTimeString();
 
   //pick images
-  const handleSelectImage = async () => {
+  const pickGalleryImage = async () => {
     try {
-      const image = await ImagePicker.openPicker({
-        width: 300,
-        height: 250,
-        cropping: true,
-      });
-      //console.log(image);
-      setSelectedImage(image);
-      setValidateImage(true);
+      await SelectGalleryImage({setSelectedImage, setValidateImage});
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  //pick camera for image
+  const pickCameraImage = async () => {
+    try {
+      await SelectCameraImage({setSelectedImage, setValidateImage});
     } catch (error) {
       console.log(error);
     }
   };
   //pick videos
-  const handleSelectVideo = async () => {
+  const pickGalleryVideo = async () => {
     try {
       const video = await ImagePicker.openPicker({
         mediaType: 'video',
@@ -77,7 +82,14 @@ const GreetingsForm = () => {
       setVideoLoading(true);
       //upload video
       try {
-        await uploadVideo(video);
+        await uploadVideo({
+          video,
+          setCurrentVideoData,
+          setProgressBar,
+          setProgress,
+          setTotalSize,
+          setCurrentSize,
+        });
         setVideoLoading(false);
         setPreviewVideo(true);
       } catch (error) {
@@ -86,20 +98,6 @@ const GreetingsForm = () => {
         console.log(error.message);
       }
       //preview video
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  //pick camera for image
-  const handleCameraImage = async () => {
-    try {
-      const image = await ImagePicker.openCamera({
-        width: 300,
-        height: 250,
-        cropping: true,
-      });
-      setSelectedImage(image);
-      setValidateImage(true);
     } catch (error) {
       console.log(error);
     }
@@ -118,7 +116,14 @@ const GreetingsForm = () => {
       setVideoLoading(true);
       //upload video
       try {
-        await uploadVideo(video);
+        await uploadVideo({
+          video,
+          setCurrentVideoData,
+          setProgressBar,
+          setProgress,
+          setTotalSize,
+          setCurrentSize,
+        });
         setVideoLoading(false);
         setPreviewVideo(true);
       } catch (error) {
@@ -131,72 +136,6 @@ const GreetingsForm = () => {
     }
   };
   //upload video function
-  const uploadVideo = async video => {
-    try {
-      const token = await getToken();
-      if (!token) {
-        return null;
-      } // replace with your API token
-      const apiUrl = 'http://10.0.2.2:8000/api/greetings';
-      const fileName = video.path.split('/').pop();
-      let current = 0;
-
-      const uploadResponse = await RNFetchBlob.fetch(
-        'POST',
-        apiUrl,
-        {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-        [
-          {
-            name: 'video',
-            filename: fileName,
-            type: video.mime,
-            data: RNFetchBlob.wrap(video.path),
-          },
-        ],
-      ) // listen to upload progress event
-        .uploadProgress((written, total) => {
-          //   console.log('uploaded', written / total);
-          const progress = written / total;
-          current = written;
-          setProgressBar(progress);
-          setProgress(Math.round((written / total) * 100));
-          setTotalSize(total);
-          setCurrentSize(current);
-        });
-      // // listen to download progress event
-      // .progress((received, total) => {
-      //   console.log('progress', received / total);
-      // });
-      // delete cached video file
-      await RNFetchBlob.fs.unlink(video.path);
-      //return response
-      const responseData = JSON.parse(uploadResponse.data);
-      setCurrentVideoData(responseData);
-      // handle the server response
-    } catch (err) {
-      console.log(err);
-
-      if (RNFetchBlob.isCancelled(err)) {
-        // user cancelled the upload
-      } else if (RNFetchBlob.sessionExpired(err)) {
-        // session expired, log out user
-      } else if (err.message === 'Network request failed') {
-        // network error
-        console.log('Network Error!');
-      } else if (err.message === 'Stream closed') {
-        // handle stream closed error
-        console.log('Stream closed error');
-
-        // display error message to user and give them the option to retry the upload
-      } else {
-        // other error
-        console.log('Other Errors');
-      }
-    }
-  };
   const onSubmitHandler = async data => {
     //console.log(data);
     //console.log(selectedImage.path);
@@ -214,7 +153,8 @@ const GreetingsForm = () => {
     //console.log(title, descriptions, image, date, time);
 
     try {
-      await uploadData(title, descriptions, image, date, time);
+      const id = currentVideoData.greetings.id;
+      await uploadData(title, descriptions, image, date, time, id);
       setLoading(false);
       navigation.replace(RouteName.allGreetings);
     } catch (error) {
@@ -224,68 +164,11 @@ const GreetingsForm = () => {
   };
   //cancel button handler
   const cancelHandler = async () => {
-    const videoId = currentVideoData.greetings.id;
-    const apiUrl = 'http://10.0.2.2:8000/api/greetings';
-
     try {
-      const token = await getToken();
-      if (!token) {
-        return null;
-      }
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      };
-      await axios
-        .delete(`${apiUrl}/${videoId}`, config)
-        .then(response => {
-          //console.log('Resource deleted:', response.data);
-        })
-        .catch(error => {
-          console.error('Error deleting resource:', error);
-        });
-
-      setPreviewVideo(false);
+      const id = currentVideoData.greetings.id;
+      await CancelVideoHandler({id, setPreviewVideo});
     } catch (error) {
       console.log(error);
-    }
-  };
-  //submit all data
-  const uploadData = async (title, descriptions, image, date, time) => {
-    try {
-      const token = await getToken();
-      if (!token) {
-        return null;
-      } // replace with your API token
-      //console.log(title, descriptions, image, date, time);
-      const greetingsId = currentVideoData.greetings.id;
-      const apiUrl = `http://10.0.2.2:8000/api/greetings/${greetingsId}?_method=PUT`;
-
-      const formData = new FormData();
-      formData.append('title', title);
-      formData.append('descriptions', descriptions);
-      formData.append('date', date);
-      formData.append('time', time);
-      formData.append('image', {
-        uri: image,
-        name: image.split('/').pop(),
-        type: 'image/jpeg',
-      });
-      console.log(formData);
-      const response = await axios({
-        method: 'post',
-        url: apiUrl,
-        data: formData,
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      // handle the server response
-    } catch (err) {
-      console.log(err);
     }
   };
 
@@ -336,10 +219,10 @@ const GreetingsForm = () => {
           {/* image */}
           <View style={[styles.button, styles.rowView]}>
             <Text style={{color: Colors.primary}}>Select Image:</Text>
-            <TouchableOpacity activeOpacity={0.6} onPress={handleCameraImage}>
+            <TouchableOpacity activeOpacity={0.6} onPress={pickCameraImage}>
               <Icon name="camera" size={22} color={Colors.white} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectImage}>
+            <TouchableOpacity activeOpacity={0.6} onPress={pickGalleryImage}>
               <Icon name="image" size={22} color={Colors.white} />
             </TouchableOpacity>
             {!validateImage && (
@@ -371,7 +254,7 @@ const GreetingsForm = () => {
             <TouchableOpacity activeOpacity={0.6} onPress={handleCameraVideo}>
               <Icon name="camera" size={22} color={Colors.white} />
             </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={handleSelectVideo}>
+            <TouchableOpacity activeOpacity={0.6} onPress={pickGalleryVideo}>
               <Icon name="video-camera" size={22} color={Colors.white} />
             </TouchableOpacity>
             {!validateVideo && (
