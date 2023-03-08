@@ -21,7 +21,11 @@ const GreetingsDetails = ({route, navigation}) => {
   return (
     <ScrollView style={styles.container}>
       <View>
-        <BackArrow visibility={true} onPressBack={() => navigation.goBack()} />
+        <BackArrow
+          iconName={'ios-arrow-back'}
+          visibility={true}
+          onPressBack={() => navigation.goBack()}
+        />
       </View>
       <View style={styles.contentView}>
         {/* title */}

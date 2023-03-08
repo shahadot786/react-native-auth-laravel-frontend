@@ -3,13 +3,17 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Colors from '../constants/Colors';
 
-const BackArrow = ({visibility = false, onPressBack}) => {
+const BackArrow = ({visibility = false, onPressBack, iconName}) => {
   return (
     <>
       {visibility && (
         <View style={styles.arrow}>
           <TouchableOpacity activeOpacity={0.6} onPress={onPressBack}>
-            <Icon name={'ios-arrow-back'} size={28} color={Colors.white} />
+            <Icon
+              name={iconName}
+              size={28}
+              color={Colors.white}
+            />
           </TouchableOpacity>
         </View>
       )}

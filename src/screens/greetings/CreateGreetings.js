@@ -11,7 +11,11 @@ const CreateGreetings = () => {
   return (
     <View style={styles.container}>
       {/* back arrow */}
-      <BackArrow visibility={true} onPressBack={() => navigation.goBack()} />
+      <BackArrow
+        iconName={'ios-arrow-back'}
+        visibility={true}
+        onPressBack={() => navigation.goBack()}
+      />
       {/* heading */}
       <View style={styles.heading}>
         <Heading color={Colors.white}>Create Greetings</Heading>

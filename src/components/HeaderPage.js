@@ -19,7 +19,7 @@ const HeaderBackground = () => {
 
   return (
     <View style={styles.container}>
-      <BackArrow visibility={false} />
+      <BackArrow visibility={false} iconName={'ios-arrow-back'} />
       {/* logout */}
       <View style={styles.logout}>
         <Logout />

@@ -1,6 +1,6 @@
 import {Image, ImageBackground, StyleSheet, Text, View} from 'react-native';
 import React from 'react';
-import Header from '../BackArrow';
+import BackArrow from '../BackArrow';
 import Heading from '../Heading';
 import * as Animatable from 'react-native-animatable';
 
@@ -12,7 +12,11 @@ const CardHeader = ({data, navigation: {goBack}}) => {
         source={data.backgroundImage}
         imageStyle={{borderBottomLeftRadius: 40, borderBottomRightRadius: 40}}
         resizeMode="cover">
-        <Header visibility={true} onPressBack={() => goBack()} />
+        <BackArrow
+          iconName={'ios-arrow-back'}
+          visibility={true}
+          onPressBack={() => goBack()}
+        />
         <View style={styles.content}>
           <Image source={data.cardImage} />
           <View>

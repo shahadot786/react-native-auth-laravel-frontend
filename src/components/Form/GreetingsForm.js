@@ -26,6 +26,7 @@ import {
   SelectGalleryImage,
 } from '../../services/ResourceSelection';
 import {uploadVideo} from '../../services/UploadVideo';
+import Spinner from '../spinner/Spinner';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
@@ -113,24 +114,25 @@ const GreetingsForm = () => {
       //console.log(video);
       setValidateVideo(true);
       setSelectedVideo(video);
-      setVideoLoading(true);
+      navigation.navigate(RouteName.cropper, {videoPath: video.path});
+      //setVideoLoading(true);
       //upload video
-      try {
-        await uploadVideo({
-          video,
-          setCurrentVideoData,
-          setProgressBar,
-          setProgress,
-          setTotalSize,
-          setCurrentSize,
-        });
-        setVideoLoading(false);
-        setPreviewVideo(true);
-      } catch (error) {
-        setVideoLoading(false);
-        setPreviewVideo(false);
-        console.log(error.message);
-      }
+      // try {
+      //   await uploadVideo({
+      //     video,
+      //     setCurrentVideoData,
+      //     setProgressBar,
+      //     setProgress,
+      //     setTotalSize,
+      //     setCurrentSize,
+      //   });
+      //   setVideoLoading(false);
+      //   setPreviewVideo(true);
+      // } catch (error) {
+      //   setVideoLoading(false);
+      //   setPreviewVideo(false);
+      //   console.log(error.message);
+      // }
     } catch (error) {
       console.log(error);
     }
