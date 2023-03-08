@@ -1,9 +1,9 @@
 import {View, Text, StyleSheet} from 'react-native';
 import React, {useState} from 'react';
 import BackArrow from '../../components/BackArrow';
-import VideoPlayer from '../../components/Video/VideoPlayer';
 import Heading from '../../components/Heading';
 import Colors from '../../constants/Colors';
+import CropperVideoPlayer from './CropperVideoPlayer';
 
 const VideoCropperScreen = ({route, navigation}) => {
   const path = route.params.videoPath;
@@ -19,8 +19,7 @@ const VideoCropperScreen = ({route, navigation}) => {
       </View>
       {/* content */}
       <View>
-        <Heading color={Colors.white}>Crop Video</Heading>
-        <VideoPlayer videoUrl={path} />
+        <CropperVideoPlayer videoUrl={path} />
       </View>
     </View>
   );

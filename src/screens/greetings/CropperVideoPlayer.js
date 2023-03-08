@@ -1,0 +1,152 @@
+import React, {useRef, useState} from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  Dimensions,
+  TouchableWithoutFeedback,
+  ActivityIndicator,
+  TouchableOpacity,
+} from 'react-native';
+import Video from 'react-native-video';
+import Colors from '../../constants/Colors';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import Slider from '@react-native-community/slider';
+
+const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
+
+const CropperVideoPlayer = ({videoUrl}) => {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [duration, setDuration] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const videoPlayer = useRef(null);
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleLoad = ({duration}) => {
+    setDuration(duration);
+    setIsLoading(false);
+  };
+
+  const handleProgress = ({currentTime}) => {
+    setCurrentTime(currentTime);
+  };
+
+  const handleSliderChange = value => {
+    videoPlayer.current.seek(value);
+    setCurrentTime(value);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Video
+        source={{uri: videoUrl}}
+        ref={videoPlayer}
+        style={styles.videoPlayer}
+        resizeMode="cover"
+        onLoad={handleLoad}
+        onProgress={handleProgress}
+        paused={!isPlaying}
+      />
+
+      {isLoading && (
+        <View style={styles.loading}>
+          <ActivityIndicator size={30} color={Colors.primary} />
+          <Text style={{color: Colors.white, fontSize: 16}}>Loading...</Text>
+        </View>
+      )}
+      {!isLoading && (
+        <View style={styles.controls}>
+          <TouchableWithoutFeedback onPress={handlePlayPause}>
+            <View style={styles.playPauseButton}>
+              {isPlaying ? (
+                <Icon
+                  name="pause-circle-filled"
+                  size={30}
+                  color={Colors.primary}
+                />
+              ) : (
+                <Icon
+                  name="play-circle-fill"
+                  size={30}
+                  color={Colors.primary}
+                />
+              )}
+            </View>
+          </TouchableWithoutFeedback>
+          <Slider
+            style={styles.slider}
+            minimumValue={0}
+            maximumValue={duration}
+            value={currentTime}
+            onValueChange={handleSliderChange}
+            minimumTrackTintColor={Colors.primary}
+            maximumTrackTintColor="white"
+            thumbTintColor="white"
+          />
+          <Text style={styles.time}>
+            {Math.floor(currentTime / 60)}:
+            {('0' + Math.floor(currentTime % 60)).slice(-2)} /{' '}
+            {Math.floor(duration / 60)}:
+            {('0' + Math.floor(duration % 60)).slice(-2)}
+          </Text>
+        </View>
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: Colors.black,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  videoPlayer: {
+    width: width,
+    height: height-200,
+  },
+  controls: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  time: {
+    color: Colors.primary,
+  },
+  playPauseButton: {
+    width: 30,
+    height: 30,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.primary,
+    borderRadius: 15,
+  },
+  loading: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  slider: {
+    flex: 1,
+    height: 25,
+  },
+});
+export default CropperVideoPlayer;
