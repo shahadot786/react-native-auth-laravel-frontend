@@ -12,6 +12,7 @@ import Video from 'react-native-video';
 import Colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Slider from '@react-native-community/slider';
+import Button from '../../components/buttons/Button';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -19,7 +20,8 @@ const height = Dimensions.get('screen').height;
 const CropperVideoPlayer = ({videoUrl}) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [duration, setDuration] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const videoPlayer = useRef(null);
 
@@ -29,16 +31,16 @@ const CropperVideoPlayer = ({videoUrl}) => {
 
   const handleLoad = ({duration}) => {
     setDuration(duration);
+    setEndTime(duration);
     setIsLoading(false);
   };
 
-  const handleProgress = ({currentTime}) => {
-    setCurrentTime(currentTime);
+  const handleStartTimeChange = value => {
+    setStartTime(value);
   };
 
-  const handleSliderChange = value => {
-    videoPlayer.current.seek(value);
-    setCurrentTime(value);
+  const handleEndTimeChange = value => {
+    setEndTime(value);
   };
 
   return (
@@ -49,7 +51,7 @@ const CropperVideoPlayer = ({videoUrl}) => {
         style={styles.videoPlayer}
         resizeMode="cover"
         onLoad={handleLoad}
-        onProgress={handleProgress}
+        // onProgress={handleProgress}
         paused={!isPlaying}
       />
 
@@ -66,19 +68,19 @@ const CropperVideoPlayer = ({videoUrl}) => {
               {isPlaying ? (
                 <Icon
                   name="pause-circle-filled"
-                  size={30}
+                  size={70}
                   color={Colors.primary}
                 />
               ) : (
                 <Icon
                   name="play-circle-fill"
-                  size={30}
+                  size={70}
                   color={Colors.primary}
                 />
               )}
             </View>
           </TouchableWithoutFeedback>
-          <Slider
+          {/* <Slider
             style={styles.slider}
             minimumValue={0}
             maximumValue={duration}
@@ -93,32 +95,72 @@ const CropperVideoPlayer = ({videoUrl}) => {
             {('0' + Math.floor(currentTime % 60)).slice(-2)} /{' '}
             {Math.floor(duration / 60)}:
             {('0' + Math.floor(duration % 60)).slice(-2)}
-          </Text>
+          </Text> */}
         </View>
       )}
+      <View style={styles.sliderController}>
+        {/* <Text style={{color: Colors.white}}>
+          Video Duration: {duration} seconds
+        </Text> */}
+        <View>
+          <Text style={styles.time}>
+            Start Time: {Math.floor(startTime / 60)}:
+            {('0' + Math.floor(startTime % 60)).slice(-2)}
+          </Text>
+          <Slider
+            style={styles.slider}
+            value={startTime}
+            minimumValue={0}
+            maximumValue={duration}
+            onValueChange={handleStartTimeChange}
+            minimumTrackTintColor={Colors.primary}
+            maximumTrackTintColor="white"
+            thumbTintColor="white"
+          />
+        </View>
+        <View>
+          <Text style={styles.time}>
+            End Time: {Math.floor(endTime / 60)}:
+            {('0' + Math.floor(endTime % 60)).slice(-2)}
+          </Text>
+          <Slider
+            style={styles.slider}
+            value={endTime}
+            minimumValue={0}
+            maximumValue={duration}
+            onValueChange={handleEndTimeChange}
+            minimumTrackTintColor={Colors.primary}
+            maximumTrackTintColor="white"
+            thumbTintColor="white"
+          />
+        </View>
+      </View>
+      <Button backgroundColor={Colors.primary} textColor={Colors.black}>
+        SAVE
+      </Button>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: Colors.black,
+    backgroundColor: Colors.secondary,
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 5,
   },
   videoPlayer: {
     width: width,
-    height: height-200,
+    height: height - 300,
+    // aspectRatio: 9 / 16,
   },
   controls: {
     position: 'absolute',
-    bottom: 0,
+    bottom: height / 2 - 100,
     left: 0,
     right: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 10,
     paddingVertical: 5,
@@ -126,15 +168,7 @@ const styles = StyleSheet.create({
   time: {
     color: Colors.primary,
   },
-  playPauseButton: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.primary,
-    borderRadius: 15,
-  },
+  playPauseButton: {},
   loading: {
     position: 'absolute',
     top: 0,
@@ -144,9 +178,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  sliderController: {
+    gap: 12,
+    marginTop: 10,
+  },
   slider: {
-    flex: 1,
-    height: 25,
+    width: width / 1.2,
+    height: 20,
   },
 });
 export default CropperVideoPlayer;
