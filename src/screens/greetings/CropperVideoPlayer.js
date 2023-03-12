@@ -19,6 +19,8 @@ import {FormatTime} from '../../services/FormatTime';
 import {FFmpegKit, FFmpegKitConfig} from 'ffmpeg-kit-react-native';
 import RNFS from 'react-native-fs';
 import MultiSlider from '@ptomasroos/react-native-multi-slider';
+import {useNavigation} from '@react-navigation/native';
+import RouteName from '../../constants/RouteName';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -32,9 +34,9 @@ const CropperVideoPlayer = ({videoUrl}) => {
   const [endTime, setEndTime] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [trimLoading, setTrimLoading] = useState(false);
-  const [values, setValues] = useState([20, 40]);
+  const [values, setValues] = useState([startTime, endTime]);
   const videoPlayer = useRef(null);
-
+  const navigation = useNavigation();
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
@@ -90,7 +92,7 @@ const CropperVideoPlayer = ({videoUrl}) => {
       const input = videoUrl;
       const uniqueName = new Date();
 
-      const output = `${RNFS.CachesDirectoryPath}/helloSuperStar02.mp4`;
+      const output = `${RNFS.CachesDirectoryPath}/helloSuperStar04.mp4`;
       //const compressionCodec = 'libx264'; // Use H.264 codec for compression
       const videoBitrate = 500; // Set target video bitrate to 500 kbps
       const audioBitrate = 128; // Set target audio bitrate to 128 kbps
@@ -108,7 +110,9 @@ const CropperVideoPlayer = ({videoUrl}) => {
       // Set the trimmed video path to state variable
       //console.log('Output of trimmer:', output);
       setTrimLoading(false);
-      Alert.alert('Success', `Trimmed and compressed video saved to ${output}`);
+      //navigation.navigate(RouteName.createGreetings, {trimData: output});
+      //Alert.alert('Success', `Trimmed and compressed video saved to ${output}`);
+      console.log(output);
     } catch (err) {
       setTrimLoading(false);
       Alert.alert('Error', err.message);
@@ -154,22 +158,6 @@ const CropperVideoPlayer = ({videoUrl}) => {
                 )}
               </View>
             </TouchableWithoutFeedback>
-            {/* <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={duration}
-            value={currentTime}
-            onValueChange={handleSliderChange}
-            minimumTrackTintColor={Colors.primary}
-            maximumTrackTintColor="white"
-            thumbTintColor="white"
-          />
-          <Text style={styles.time}>
-            {Math.floor(currentTime / 60)}:
-            {('0' + Math.floor(currentTime % 60)).slice(-2)} /{' '}
-            {Math.floor(duration / 60)}:
-            {('0' + Math.floor(duration % 60)).slice(-2)}
-          </Text> */}
           </View>
         )}
       </View>
@@ -203,7 +191,7 @@ const CropperVideoPlayer = ({videoUrl}) => {
             thumbTintColor="white"
           />
         </View>
-        <MultiSlider
+        {/* <MultiSlider
           values={values}
           min={0}
           max={duration}
@@ -224,11 +212,11 @@ const CropperVideoPlayer = ({videoUrl}) => {
               </View>
             );
           }}
-        />
-        <View style={styles.labelContainer}>
+        /> */}
+        {/* <View style={styles.labelContainer}>
           <Text style={styles.label}>{values[0]}</Text>
           <Text style={styles.label}>{values[1]}</Text>
-        </View>
+        </View> */}
         {trimLoading && <ActivityIndicator size={30} color={Colors.primary} />}
         <Button
           onPress={onTrim}

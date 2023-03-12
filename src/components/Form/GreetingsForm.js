@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useForm} from 'react-hook-form';
 import CustomInput from '../input/CustomInput';
 import Colors from '../../constants/Colors';
@@ -26,7 +26,7 @@ import VideoPicker from '../Video/VideoPicker';
 import CustomProgressBar from '../progress/CustomProgressBar';
 import CustomDateTimePicker from '../date_time/CustomDateTimePicker';
 
-const GreetingsForm = () => {
+const GreetingsForm = ({trimmedVideoPath}) => {
   const {control, handleSubmit} = useForm();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -50,6 +50,34 @@ const GreetingsForm = () => {
   //convert the date time to local string
   const updatedDate = date.toLocaleDateString();
   const updatedTime = date.toLocaleTimeString();
+
+  // useEffect(() => {
+  //   if (trimmedVideoPath !== null) {
+  //     // Call your async function here
+  //     uploadTrimVideo();
+  //   }
+  // }, [trimmedVideoPath]);
+
+  // const uploadTrimVideo = async () => {
+  //   //setVideoLoading(true);
+  //   //upload video
+  //   try {
+  //     await uploadVideo({
+  //       trimmedVideoPath,
+  //       setCurrentVideoData,
+  //       setProgressBar,
+  //       setProgress,
+  //       setTotalSize,
+  //       setCurrentSize,
+  //     });
+  //     setVideoLoading(false);
+  //     setPreviewVideo(true);
+  //   } catch (error) {
+  //     setVideoLoading(false);
+  //     setPreviewVideo(false);
+  //     console.log(error.message);
+  //   }
+  // };
 
   //pick images
   const pickGalleryImage = async () => {
@@ -113,25 +141,7 @@ const GreetingsForm = () => {
       //console.log(video);
       setValidateVideo(true);
       setSelectedVideo(video);
-      //navigation.navigate(RouteName.cropper, {videoPath: video.path});
-      setVideoLoading(true);
-      //upload video
-      try {
-        await uploadVideo({
-          video,
-          setCurrentVideoData,
-          setProgressBar,
-          setProgress,
-          setTotalSize,
-          setCurrentSize,
-        });
-        setVideoLoading(false);
-        setPreviewVideo(true);
-      } catch (error) {
-        setVideoLoading(false);
-        setPreviewVideo(false);
-        console.log(error.message);
-      }
+      navigation.navigate(RouteName.cropper, {videoPath: video.path});
     } catch (error) {
       console.log(error);
     }
