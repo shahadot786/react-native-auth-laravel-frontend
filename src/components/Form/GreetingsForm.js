@@ -4,7 +4,6 @@ import {
   ScrollView,
   StyleSheet,
   ActivityIndicator,
-  TouchableOpacity,
 } from 'react-native';
 import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
@@ -14,10 +13,6 @@ import Button from '../buttons/Button';
 import ImagePicker from 'react-native-image-crop-picker';
 import RouteName from '../../constants/RouteName';
 import {useNavigation} from '@react-navigation/native';
-import DatePicker from 'react-native-date-picker';
-import {Text} from 'react-native-animatable';
-import * as Progress from 'react-native-progress';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import VideoPlayer from '../Video/VideoPlayer';
 import {uploadData} from '../../services/GreetingsFormData';
 import {
@@ -26,8 +21,10 @@ import {
   SelectGalleryImage,
 } from '../../services/ResourceSelection';
 import {uploadVideo} from '../../services/UploadVideo';
-import Spinner from '../spinner/Spinner';
-import RNFS from 'react-native-fs';
+import ImagePickerCom from '../images/ImagePicker';
+import VideoPicker from '../Video/VideoPicker';
+import CustomProgressBar from '../progress/CustomProgressBar';
+import CustomDateTimePicker from '../date_time/CustomDateTimePicker';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
@@ -81,25 +78,25 @@ const GreetingsForm = () => {
       //console.log(video);
       setValidateVideo(true);
       setSelectedVideo(video);
-      navigation.navigate(RouteName.cropper, {videoPath: video.path});
-      // setVideoLoading(true);
+      //navigation.navigate(RouteName.cropper, {videoPath: video.path});
+      setVideoLoading(true);
       //upload video
-      // try {
-      //   await uploadVideo({
-      //     video,
-      //     setCurrentVideoData,
-      //     setProgressBar,
-      //     setProgress,
-      //     setTotalSize,
-      //     setCurrentSize,
-      //   });
-      //   setVideoLoading(false);
-      //   setPreviewVideo(true);
-      // } catch (error) {
-      //   setVideoLoading(false);
-      //   setPreviewVideo(false);
-      //   console.log(error.message);
-      // }
+      try {
+        await uploadVideo({
+          video,
+          setCurrentVideoData,
+          setProgressBar,
+          setProgress,
+          setTotalSize,
+          setCurrentSize,
+        });
+        setVideoLoading(false);
+        setPreviewVideo(true);
+      } catch (error) {
+        setVideoLoading(false);
+        setPreviewVideo(false);
+        console.log(error.message);
+      }
       //preview video
     } catch (error) {
       console.log(error);
@@ -116,25 +113,25 @@ const GreetingsForm = () => {
       //console.log(video);
       setValidateVideo(true);
       setSelectedVideo(video);
-      navigation.navigate(RouteName.cropper, {videoPath: video.path});
-      //setVideoLoading(true);
+      //navigation.navigate(RouteName.cropper, {videoPath: video.path});
+      setVideoLoading(true);
       //upload video
-      // try {
-      //   await uploadVideo({
-      //     video,
-      //     setCurrentVideoData,
-      //     setProgressBar,
-      //     setProgress,
-      //     setTotalSize,
-      //     setCurrentSize,
-      //   });
-      //   setVideoLoading(false);
-      //   setPreviewVideo(true);
-      // } catch (error) {
-      //   setVideoLoading(false);
-      //   setPreviewVideo(false);
-      //   console.log(error.message);
-      // }
+      try {
+        await uploadVideo({
+          video,
+          setCurrentVideoData,
+          setProgressBar,
+          setProgress,
+          setTotalSize,
+          setCurrentSize,
+        });
+        setVideoLoading(false);
+        setPreviewVideo(true);
+      } catch (error) {
+        setVideoLoading(false);
+        setPreviewVideo(false);
+        console.log(error.message);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -221,25 +218,11 @@ const GreetingsForm = () => {
       <View>
         <View style={{flex: 1}}>
           {/* image */}
-          <View style={[styles.button, styles.rowView]}>
-            <Text style={{color: Colors.primary}}>Select Image:</Text>
-            <TouchableOpacity activeOpacity={0.6} onPress={pickCameraImage}>
-              <Icon name="camera" size={22} color={Colors.white} />
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={pickGalleryImage}>
-              <Icon name="image" size={22} color={Colors.white} />
-            </TouchableOpacity>
-            {!validateImage && (
-              <Text
-                style={{
-                  color: Colors.danger,
-                  textAlign: 'center',
-                  marginTop: 5,
-                }}>
-                Image is required!
-              </Text>
-            )}
-          </View>
+          <ImagePickerCom
+            validateImage={validateImage}
+            pickCameraImage={pickCameraImage}
+            pickGalleryImage={pickGalleryImage}
+          />
           {/* image preview */}
           {selectedImage && (
             <>
@@ -261,25 +244,11 @@ const GreetingsForm = () => {
             </>
           )}
           {/* video */}
-          <View style={[styles.button, styles.rowView]}>
-            <Text style={{color: Colors.primary}}>Select Video:</Text>
-            <TouchableOpacity activeOpacity={0.6} onPress={handleCameraVideo}>
-              <Icon name="camera" size={22} color={Colors.white} />
-            </TouchableOpacity>
-            <TouchableOpacity activeOpacity={0.6} onPress={pickGalleryVideo}>
-              <Icon name="video-camera" size={22} color={Colors.white} />
-            </TouchableOpacity>
-            {!validateVideo && (
-              <Text
-                style={{
-                  color: Colors.danger,
-                  textAlign: 'center',
-                  marginTop: 5,
-                }}>
-                Video is required!
-              </Text>
-            )}
-          </View>
+          <VideoPicker
+            validateVideo={validateVideo}
+            handleCameraVideo={handleCameraVideo}
+            pickGalleryVideo={pickGalleryVideo}
+          />
           {/* video loading */}
           {/* video preview after loading finished*/}
           {/* preview video */}
@@ -291,61 +260,22 @@ const GreetingsForm = () => {
             />
           )}
           {videoLoading && (
-            <View
-              style={{gap: 15, justifyContent: 'center', alignItems: 'center'}}>
-              {/* <ActivityIndicator size="large" color={Colors.primary} /> */}
-              <Progress.Bar
-                progress={progressBar}
-                width={200}
-                height={10}
-                color={Colors.primary}
-              />
-              <Text
-                style={{
-                  color: Colors.primary,
-                  fontSize: 20,
-                  marginTop: 5,
-                  fontWeight: 'bold',
-                }}>
-                {Math.round(progress)}%
-              </Text>
-              {/* <Text style={{color: Colors.white, fontSize: 20}}>
-                Size: {(totalSize / 1000000).toFixed(2)} MB
-              </Text> */}
-              <Text style={{color: Colors.green, fontSize: 15}}>
-                Uploaded:{(totalSize / 1000000).toFixed(2)} MB /{' '}
-                {(currentSize / 1000000).toFixed(2)} MB
-              </Text>
-            </View>
+            <CustomProgressBar
+              progressBar={progressBar}
+              progress={progress}
+              totalSize={totalSize}
+              currentSize={currentSize}
+            />
           )}
 
           {/* date and time */}
-          <View style={[styles.button, styles.rowView]}>
-            <Text style={{color: Colors.primary}}>Select Date & Time:</Text>
-            <TouchableOpacity activeOpacity={0.6} onPress={() => setOpen(true)}>
-              <Icon name="calendar" size={22} color={Colors.white} />
-            </TouchableOpacity>
-            {date && (
-              <>
-                <Text style={{color: Colors.white}}>{updatedDate}</Text>
-                <Text style={{color: Colors.white}}>{updatedTime}</Text>
-              </>
-            )}
-          </View>
-          {/* date picker */}
-          <DatePicker
-            modal
-            is24hourSource={false}
+          <CustomDateTimePicker
             open={open}
+            setOpen={setOpen}
             date={date}
-            theme="dark"
-            onConfirm={date => {
-              setOpen(false);
-              setDate(date);
-            }}
-            onCancel={() => {
-              setOpen(false);
-            }}
+            setDate={setDate}
+            updatedDate={updatedDate}
+            updatedTime={updatedTime}
           />
         </View>
       </View>
@@ -374,13 +304,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginHorizontal: 20,
-  },
-  button: {
-    paddingVertical: 10,
-  },
-  rowView: {
-    flexDirection: 'row',
-    gap: 20,
   },
   cancelBtn: {
     position: 'absolute',
