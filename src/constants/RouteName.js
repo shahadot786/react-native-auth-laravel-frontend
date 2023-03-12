@@ -11,4 +11,5 @@ export default RouteName = {
   detailsGreetings: 'GreetingDetails',
   video: 'VideoScreen',
   cropper: 'VideoCropperScreen',
+  greetingForm: 'GreetingForm',
 };

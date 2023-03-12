@@ -27,6 +27,7 @@ import {
 } from '../../services/ResourceSelection';
 import {uploadVideo} from '../../services/UploadVideo';
 import Spinner from '../spinner/Spinner';
+import RNFS from 'react-native-fs';
 
 const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
