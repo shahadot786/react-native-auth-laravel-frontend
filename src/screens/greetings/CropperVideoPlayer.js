@@ -70,18 +70,14 @@ const CropperVideoPlayer = ({videoUrl, onTrimVideo}) => {
         return;
       }
       //console.log('Video URL=> ', videoUrl);
-      // Extract the directory path and file name
-      const lastIndex = videoUrl.lastIndexOf('/');
-      const directoryPath = videoUrl.substring(0, lastIndex + 1);
-      const fileName = videoUrl.substring(lastIndex + 1);
-      // Create the new file path
-      const newFilePath = directoryPath + CurrentDataTimeString();
       const input = videoUrl;
       // const input = `${newFilePath}.mp4`;
-      const output = `${RNFetchBlob.fs.dirs.CacheDir}/${CurrentDataTimeString()}.mp4`;
+      const output = `${
+        RNFetchBlob.fs.dirs.CacheDir
+      }/${CurrentDataTimeString()}.mp4`;
       // Trim the video using ffmpeg-kit
       await FFmpegKit.execute(
-        `-i ${input} -ss ${startTime} -to ${endTime} -filter:v scale=1280:720 -c:v mpeg4 ${output}`,
+        `-i ${input} -ss ${startTime} -to ${endTime} -filter:v scale=1280:720 ${output}`,
       );
       // Set the trimmed video path to state variable
       //console.log('Output of trimmer:', output);
@@ -323,3 +319,10 @@ export default CropperVideoPlayer;
 // await FFmpegKit.executeAsync(
 //   `-i ${output} -c:v libx264 -b:v ${videoBitrate}k -preset veryfast -c:a aac -b:a ${audioBitrate}k ${output}`,
 // );
+
+// // Extract the directory path and file name
+// const lastIndex = videoUrl.lastIndexOf('/');
+// const directoryPath = videoUrl.substring(0, lastIndex + 1);
+// const fileName = videoUrl.substring(lastIndex + 1);
+// // Create the new file path
+// const newFilePath = directoryPath + CurrentDataTimeString();

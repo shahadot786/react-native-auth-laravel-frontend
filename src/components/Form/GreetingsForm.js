@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useForm} from 'react-hook-form';
 import CustomInput from '../input/CustomInput';
 import Colors from '../../constants/Colors';
@@ -51,34 +51,6 @@ const GreetingsForm = () => {
   const updatedDate = date.toLocaleDateString();
   const updatedTime = date.toLocaleTimeString();
 
-  // useEffect(() => {
-  //   if (trimmedVideoPath !== null) {
-  //     // Call your async function here
-  //     uploadTrimVideo();
-  //   }
-  // }, [trimmedVideoPath]);
-
-  // const uploadTrimVideo = async () => {
-  //   //setVideoLoading(true);
-  //   //upload video
-  //   try {
-  //     await uploadVideo({
-  //       trimmedVideoPath,
-  //       setCurrentVideoData,
-  //       setProgressBar,
-  //       setProgress,
-  //       setTotalSize,
-  //       setCurrentSize,
-  //     });
-  //     setVideoLoading(false);
-  //     setPreviewVideo(true);
-  //   } catch (error) {
-  //     setVideoLoading(false);
-  //     setPreviewVideo(false);
-  //     console.log(error.message);
-  //   }
-  // };
-
   //pick images
   const pickGalleryImage = async () => {
     try {
@@ -101,7 +73,7 @@ const GreetingsForm = () => {
       const video = await ImagePicker.openPicker({
         mediaType: 'video',
         compressVideoPreset: 'LowQuality',
-        includeBase64: false,
+        includeBase64: true,
       });
       //console.log(video);
       setValidateVideo(true);
@@ -121,7 +93,7 @@ const GreetingsForm = () => {
     // Do something with the trimmed video path
     setVideoLoading(true);
     //console.log('Trim Path => ', trimmedVideoPath);
-    //   //upload video
+    //upload video
     try {
       await uploadVideo({
         trimmedVideoPath,
@@ -145,7 +117,7 @@ const GreetingsForm = () => {
       const video = await ImagePicker.openCamera({
         mediaType: 'video',
         compressVideoPreset: 'LowQuality',
-        includeBase64: false,
+        includeBase64: true,
       });
       //console.log(video);
       setValidateVideo(true);
@@ -179,6 +151,10 @@ const GreetingsForm = () => {
       const id = currentVideoData.greetings.id;
       await uploadData(title, descriptions, image, date, time, id);
       setLoading(false);
+      setProgressBar(0);
+      setProgress(0);
+      setTotalSize(0);
+      setCurrentSize(0);
       navigation.replace(RouteName.allGreetings);
     } catch (error) {
       setLoading(false);
@@ -190,6 +166,10 @@ const GreetingsForm = () => {
     try {
       const id = currentVideoData.greetings.id;
       await CancelVideoHandler({id, setPreviewVideo});
+      setProgressBar(0);
+      setProgress(0);
+      setTotalSize(0);
+      setCurrentSize(0);
     } catch (error) {
       console.log(error);
     }
