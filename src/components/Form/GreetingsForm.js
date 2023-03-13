@@ -82,7 +82,6 @@ const GreetingsForm = () => {
         videoPath: video.path,
         onTrimVideo: handleTrimVideo,
       });
-      setVideoLoading(true);
       //preview video
     } catch (error) {
       console.log(error);
