@@ -106,25 +106,11 @@ const GreetingsForm = () => {
       //console.log(video);
       setValidateVideo(true);
       setSelectedVideo(video);
-      //navigation.navigate(RouteName.cropper, {videoPath: video.path});
+      navigation.navigate(RouteName.cropper, {
+        videoPath: video.path,
+        onTrimVideo: handleTrimVideo,
+      });
       setVideoLoading(true);
-      //upload video
-      try {
-        await uploadVideo({
-          video,
-          setCurrentVideoData,
-          setProgressBar,
-          setProgress,
-          setTotalSize,
-          setCurrentSize,
-        });
-        setVideoLoading(false);
-        setPreviewVideo(true);
-      } catch (error) {
-        setVideoLoading(false);
-        setPreviewVideo(false);
-        console.log(error.message);
-      }
       //preview video
     } catch (error) {
       console.log(error);

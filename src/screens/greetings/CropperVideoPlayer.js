@@ -18,6 +18,7 @@ import Button from '../../components/buttons/Button';
 import {FormatTime} from '../../services/FormatTime';
 import {FFmpegKit, FFmpegKitConfig} from 'ffmpeg-kit-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
+import {CurrentDataTimeString} from '../../components/date_time/CurrentDataTimeString';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
@@ -32,31 +33,27 @@ const CropperVideoPlayer = ({videoUrl, onTrimVideo}) => {
   const [isLoading, setIsLoading] = useState(true);
   const [trimLoading, setTrimLoading] = useState(false);
   const videoPlayer = useRef(null);
+
+  //handel play pause
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
-
+  //handel video load
   const handleLoad = ({duration}) => {
     setDuration(duration);
     setEndTime(duration);
     setIsLoading(false);
   };
-
+  //handel video start time
   const handleStartTimeChange = value => {
     videoPlayer.current.seek(value);
     setStartTime(value);
   };
-
+  //handel video end time
   const handleEndTimeChange = value => {
     videoPlayer.current.seek(value);
     setEndTime(value);
   };
-
-  // const handleProgress = ({startTime, endTime}) => {
-  //   setStartTime(startTime);
-  //   setEndTime(endTime);
-  // };
-
   //trim function
   const onTrim = async () => {
     try {
@@ -72,43 +69,20 @@ const CropperVideoPlayer = ({videoUrl, onTrimVideo}) => {
         );
         return;
       }
-
-      // const filePath = videoUrl;
-      // RNFS.stat(filePath)
-      //   .then(statResult => {
-      //     const fileSize = statResult.size;
-      //     console.log('File size:', fileSize);
-      //   })
-      //   .catch(err => {
-      //     console.log(err.message);
-      //   });
-
-      //console.log('Video URL=> ', filePath);
+      //console.log('Video URL=> ', videoUrl);
+      // Extract the directory path and file name
+      const lastIndex = videoUrl.lastIndexOf('/');
+      const directoryPath = videoUrl.substring(0, lastIndex + 1);
+      const fileName = videoUrl.substring(lastIndex + 1);
+      // Create the new file path
+      const newFilePath = directoryPath + CurrentDataTimeString();
       const input = videoUrl;
-
-      const output = `${RNFetchBlob.fs.dirs.CacheDir}/helloSuperStar.mp4`;
-      //const compressionCodec = 'libx264'; // Use H.264 codec for compression
-      const videoBitrate = 500; // Set target video bitrate to 500 kbps
-      const audioBitrate = 128; // Set target audio bitrate to 128 kbps
+      // const input = `${newFilePath}.mp4`;
+      const output = `${RNFetchBlob.fs.dirs.CacheDir}/${CurrentDataTimeString()}.mp4`;
       // Trim the video using ffmpeg-kit
       await FFmpegKit.execute(
-        `-i ${input} -ss ${startTime} -to ${endTime} -c:v mpeg4 ${output}`,
+        `-i ${input} -ss ${startTime} -to ${endTime} -filter:v scale=1280:720 -c:v mpeg4 ${output}`,
       );
-
-      // const trimmedVideoExists = await RNFetchBlob.fs.exists(output);
-
-      // if (trimmedVideoExists) {
-      //   console.log('Trimmed video file exists!');
-      // } else {
-      //   console.log('Trimmed video file does not exist!');
-      // }
-      //'-i file1.mp4 -c:v mpeg4 file2.mp4'
-      //ffmpeg -i input.mp4 -c:v libx264 -crf 23 -preset veryfast -c:a copy output.mp4
-      // Apply compression using ffmpeg-kit
-      // await FFmpegKit.executeAsync(
-      //   `-i ${output} -c:v libx264 -b:v ${videoBitrate}k -preset veryfast -c:a aac -b:a ${audioBitrate}k ${output}`,
-      // );
-
       // Set the trimmed video path to state variable
       //console.log('Output of trimmer:', output);
       setTrimLoading(false);
@@ -117,7 +91,7 @@ const CropperVideoPlayer = ({videoUrl, onTrimVideo}) => {
       //console.log('Output =>', output);
     } catch (err) {
       setTrimLoading(false);
-      Alert.alert('Error', err.message);
+      console.log('Error', err.message);
       //console.log(err.message);
     }
   };
@@ -322,3 +296,30 @@ const styles = StyleSheet.create({
   },
 });
 export default CropperVideoPlayer;
+
+// const filePath = videoUrl;
+// RNFS.stat(filePath)
+//   .then(statResult => {
+//     const fileSize = statResult.size;
+//     console.log('File size:', fileSize);
+//   })
+//   .catch(err => {
+//     console.log(err.message);
+//   });
+// //const compressionCodec = 'libx264'; // Use H.264 codec for compression
+// const videoBitrate = 500; // Set target video bitrate to 500 kbps
+// const audioBitrate = 128; // Set target audio bitrate to 128 kbps
+// const trimmedVideoExists = await RNFetchBlob.fs.exists(output);
+
+// if (trimmedVideoExists) {
+//   console.log('Trimmed video file exists!');
+// } else {
+//   console.log('Trimmed video file does not exist!');
+// }
+
+//'-i file1.mp4 -c:v mpeg4 file2.mp4'
+//ffmpeg -i input.mp4 -c:v libx264 -crf 23 -preset veryfast -c:a copy output.mp4
+// Apply compression using ffmpeg-kit
+// await FFmpegKit.executeAsync(
+//   `-i ${output} -c:v libx264 -b:v ${videoBitrate}k -preset veryfast -c:a aac -b:a ${audioBitrate}k ${output}`,
+// );
