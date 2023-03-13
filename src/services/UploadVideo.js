@@ -3,7 +3,7 @@ import {getToken} from '../auth/auth';
 import {API_BASE_URL} from '@env';
 
 export const uploadVideo = async ({
-  video,
+  trimmedVideoPath,
   setCurrentVideoData,
   setProgressBar,
   setProgress,
@@ -16,7 +16,9 @@ export const uploadVideo = async ({
       return null;
     } // replace with your API token
     const apiUrl = `${API_BASE_URL}/greetings`;
-    const fileName = video.path.split('/').pop();
+    const videoUri = `file://${trimmedVideoPath}`;
+    const fileName = videoUri.split('/').pop();
+    //console.log(videoUri);
     let current = 0;
     const uploadResponse = await RNFetchBlob.fetch(
       'POST',
@@ -29,8 +31,8 @@ export const uploadVideo = async ({
         {
           name: 'video',
           filename: fileName,
-          type: video.mime,
-          data: RNFetchBlob.wrap(video.path),
+          type: 'video/mp4',
+          data: RNFetchBlob.wrap(videoUri),
         },
       ],
     ) // listen to upload progress event
@@ -47,7 +49,7 @@ export const uploadVideo = async ({
     //   console.log('progress', received / total);
     // });
     // delete cached video file
-    await RNFetchBlob.fs.unlink(video.path);
+    await RNFetchBlob.fs.unlink(videoUri);
     //return response
     const responseData = JSON.parse(uploadResponse.data);
     setCurrentVideoData(responseData);

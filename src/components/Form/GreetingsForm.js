@@ -5,7 +5,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from 'react-native';
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useForm} from 'react-hook-form';
 import CustomInput from '../input/CustomInput';
 import Colors from '../../constants/Colors';
@@ -26,7 +26,7 @@ import VideoPicker from '../Video/VideoPicker';
 import CustomProgressBar from '../progress/CustomProgressBar';
 import CustomDateTimePicker from '../date_time/CustomDateTimePicker';
 
-const GreetingsForm = ({trimmedVideoPath}) => {
+const GreetingsForm = () => {
   const {control, handleSubmit} = useForm();
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
@@ -130,6 +130,29 @@ const GreetingsForm = ({trimmedVideoPath}) => {
       console.log(error);
     }
   };
+  //handleTrimVideo
+  const handleTrimVideo = async trimmedVideoPath => {
+    // Do something with the trimmed video path
+    setVideoLoading(true);
+    //console.log('Trim Path => ', trimmedVideoPath);
+    //   //upload video
+    try {
+      await uploadVideo({
+        trimmedVideoPath,
+        setCurrentVideoData,
+        setProgressBar,
+        setProgress,
+        setTotalSize,
+        setCurrentSize,
+      });
+      setVideoLoading(false);
+      setPreviewVideo(true);
+    } catch (error) {
+      setVideoLoading(false);
+      setPreviewVideo(false);
+      console.log(error.message);
+    }
+  };
   //pick camera for video
   const handleCameraVideo = async () => {
     try {
@@ -141,7 +164,10 @@ const GreetingsForm = ({trimmedVideoPath}) => {
       //console.log(video);
       setValidateVideo(true);
       setSelectedVideo(video);
-      navigation.navigate(RouteName.cropper, {videoPath: video.path});
+      navigation.navigate(RouteName.cropper, {
+        videoPath: video.path,
+        onTrimVideo: handleTrimVideo,
+      });
     } catch (error) {
       console.log(error);
     }

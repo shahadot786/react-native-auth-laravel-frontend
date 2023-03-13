@@ -54,6 +54,7 @@ const VideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
         onLoad={handleLoad}
         onProgress={handleProgress}
         paused={!isPlaying}
+        //onError={error => console.error(error)}
       />
       {/* cancel button */}
       {isCancel && (

@@ -1,3 +1,4 @@
+import RNFetchBlob from 'rn-fetch-blob';
 import api from '../api/api';
 import {getToken} from '../auth/auth';
 
@@ -32,6 +33,8 @@ export const uploadData = async (
         Accept: 'application/json',
       },
     });
+    // delete cached video file
+    await RNFetchBlob.fs.unlink(image);
     // handle the server response
   } catch (err) {
     console.log(err);

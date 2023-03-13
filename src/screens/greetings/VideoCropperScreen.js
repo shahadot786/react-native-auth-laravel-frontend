@@ -7,6 +7,13 @@ import CropperVideoPlayer from './CropperVideoPlayer';
 
 const VideoCropperScreen = ({route, navigation}) => {
   const path = route.params.videoPath;
+  const {onTrimVideo} = route.params;
+
+  const handleTrimVideo = trimmedVideoPath => {
+    onTrimVideo(trimmedVideoPath);
+    navigation.goBack();
+  };
+
   return (
     <View style={styles.container}>
       {/* back */}
@@ -19,7 +26,7 @@ const VideoCropperScreen = ({route, navigation}) => {
       </View>
       {/* content */}
       <View>
-        <CropperVideoPlayer videoUrl={path} />
+        <CropperVideoPlayer videoUrl={path} onTrimVideo={handleTrimVideo} />
       </View>
     </View>
   );
