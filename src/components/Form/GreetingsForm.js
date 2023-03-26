@@ -40,9 +40,9 @@ const GreetingsForm = () => {
   const [validateVideo, setValidateVideo] = useState(true);
   //sate for video
   const [progress, setProgress] = useState(0);
+  const [progressBar, setProgressBar] = useState(0);
   const [totalSize, setTotalSize] = useState(0);
   const [currentSize, setCurrentSize] = useState(0);
-  const [progressBar, setProgressBar] = useState(0);
   //get the current video data
   const [currentVideoData, setCurrentVideoData] = useState();
   //navigation

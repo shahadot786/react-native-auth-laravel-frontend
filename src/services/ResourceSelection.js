@@ -17,8 +17,7 @@ export const SelectGalleryImage = async ({
     setSelectedImage(image);
     setValidateImage(true);
   } catch (error) {
-    console.log(error);
-    s;
+    console.log('Pick gallery Image Error => ', error);
   }
 };
 //select image from camera
