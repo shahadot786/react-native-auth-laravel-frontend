@@ -13,4 +13,5 @@ export default RouteName = {
   cropper: 'VideoCropperScreen',
   greetingForm: 'GreetingForm',
   fileUpload: 'FileUpload',
+  fileList: 'FileList',
 };

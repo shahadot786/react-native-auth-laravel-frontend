@@ -14,6 +14,7 @@ import {View} from 'react-native';
 import Spinner from '../components/spinner/Spinner';
 import VideoCropperScreen from '../screens/greetings/VideoCropperScreen';
 import FileUploadS3 from '../screens/FileUploadS3';
+import FileUploadList from '../screens/FileUploadList';
 
 const Stack = createNativeStackNavigator();
 
@@ -95,6 +96,11 @@ const NavigationHome = () => {
               <Stack.Screen
                 name={RouteName.signUp}
                 component={SignUpScreen}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name={RouteName.fileList}
+                component={FileUploadList}
                 options={{headerShown: false}}
               />
             </>

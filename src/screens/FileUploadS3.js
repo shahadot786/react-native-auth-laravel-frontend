@@ -1,4 +1,4 @@
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import React, {useState} from 'react';
 import Heading from '../components/Heading';
 import {
@@ -9,9 +9,14 @@ import ImagePickerCom from '../components/images/ImagePicker';
 import Colors from '../constants/Colors';
 import {RNS3} from 'react-native-aws3';
 import {FileNameToDateStringWithExtensions} from '../components/date_time/FileNameToDateStringWithExtension';
+import {useNavigation} from '@react-navigation/native';
+import RouteName from '../constants/RouteName';
 
 const FileUploadS3 = () => {
+  const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [uploadData, setUploadData] = useState();
 
   const uploadImageToS3 = async (imagePath, newFilename, type) => {
     // Set your AWS S3 configuration
@@ -34,7 +39,8 @@ const FileUploadS3 = () => {
       .then(response => {
         if (response.status !== 201)
           throw new Error('Failed to upload image to S3');
-        console.log(response.body);
+        //console.log(response.body);
+        setUploadData(response.body);
         /**
          * {
          *   postResponse: {
@@ -54,10 +60,12 @@ const FileUploadS3 = () => {
 
   const pickGalleryImage = async () => {
     try {
+      setLoading(true);
       await SelectGalleryImage({setSelectedImage});
       // uploaded image URL
       console.log(selectedImage);
-      //await uploadFile();
+      await uploadFile();
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -66,9 +74,11 @@ const FileUploadS3 = () => {
   //pick camera for image
   const pickCameraImage = async () => {
     try {
+      setLoading(true);
       await SelectCameraImage({setSelectedImage});
       console.log(selectedImage);
       await uploadFile();
+      setLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -81,45 +91,54 @@ const FileUploadS3 = () => {
       let type = selectedImage.mime;
       const newFilename = FileNameToDateStringWithExtensions(fileName);
       await uploadImageToS3(imagePath, newFilename, type);
+      navigation.navigate(RouteName.fileList, {awsData: uploadData});
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <View style={styles.container}>
-      {/* Heading */}
-      <Heading color={Colors.white}>Upload File into Amazon S3</Heading>
-      {/* image preview */}
-      <View>
-        {/* image preview */}
-        {selectedImage && (
-          <>
-            <Image
-              source={{uri: selectedImage.path}}
-              style={{
-                width: 350,
-                height: 250,
-                marginVertical: 15,
-                borderRadius: 15,
-              }}
-            />
-            {/* <TouchableOpacity
+    <>
+      {loading ? (
+        <ActivityIndicator color={Colors.primary} size={24} />
+      ) : (
+        <>
+          <View style={styles.container}>
+            {/* Heading */}
+            <Heading color={Colors.white}>Upload File into Amazon S3</Heading>
+            {/* image preview */}
+            <View>
+              {/* image preview */}
+              {selectedImage && (
+                <>
+                  <Image
+                    source={{uri: selectedImage.path}}
+                    style={{
+                      width: 350,
+                      height: 250,
+                      marginVertical: 15,
+                      borderRadius: 15,
+                    }}
+                  />
+                  {/* <TouchableOpacity
                 onPress={cancelHandler}
                 style={styles.cancelBtn}
                 activeOpacity={0.6}>
                 <Icon name="close" size={30} color={Colors.primary} />
               </TouchableOpacity> */}
-          </>
-        )}
-        {/* image */}
-        {/* Progress Bar */}
-        <ImagePickerCom
-          pickCameraImage={pickCameraImage}
-          pickGalleryImage={pickGalleryImage}
-        />
-      </View>
-    </View>
+                </>
+              )}
+              {/* image */}
+              {/* Progress Bar */}
+              <ImagePickerCom
+                pickCameraImage={pickCameraImage}
+                pickGalleryImage={pickGalleryImage}
+              />
+            </View>
+          </View>
+        </>
+      )}
+    </>
   );
 };
 
