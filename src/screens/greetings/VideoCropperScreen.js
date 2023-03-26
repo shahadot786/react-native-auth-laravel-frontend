@@ -4,7 +4,7 @@ import BackArrow from '../../components/BackArrow';
 import Heading from '../../components/Heading';
 import Colors from '../../constants/Colors';
 import CropperVideoPlayer from './CropperVideoPlayer';
-import {FFmpegKit} from 'ffmpeg-kit-react-native';
+// import {FFmpegKit} from 'ffmpeg-kit-react-native';
 
 const VideoCropperScreen = ({route, navigation}) => {
   const path = route.params.videoPath;

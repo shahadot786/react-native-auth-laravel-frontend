@@ -13,6 +13,7 @@ import GreetingsDetails from '../screens/greetings/GreetingsDetails';
 import {View} from 'react-native';
 import Spinner from '../components/spinner/Spinner';
 import VideoCropperScreen from '../screens/greetings/VideoCropperScreen';
+import FileUploadS3 from '../screens/FileUploadS3';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,7 +36,7 @@ const NavigationHome = () => {
     checkLoginStatus();
   }, []);
 
-  if (isLoading) {
+  if (!isLoading) {
     return (
       <View style={{flex: 1, backgroundColor: Colors.secondary}}>
         <Spinner />
@@ -81,6 +82,11 @@ const NavigationHome = () => {
             </>
           ) : (
             <>
+              <Stack.Screen
+                name={RouteName.fileUpload}
+                component={FileUploadS3}
+                options={{headerShown: false}}
+              />
               <Stack.Screen
                 name={RouteName.signIn}
                 component={SignInScreen}

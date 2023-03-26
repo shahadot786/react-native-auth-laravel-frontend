@@ -13,7 +13,7 @@ const ImagePickerCom = ({validateImage, pickCameraImage, pickGalleryImage}) => {
       <TouchableOpacity activeOpacity={0.6} onPress={pickGalleryImage}>
         <Icon name="image" size={22} color={Colors.white} />
       </TouchableOpacity>
-      {!validateImage && (
+      {validateImage && (
         <Text
           style={{
             color: Colors.danger,

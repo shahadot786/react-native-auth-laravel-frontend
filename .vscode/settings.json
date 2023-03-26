@@ -1,3 +1,4 @@
 {
-  "cSpell.words": ["Hasan", "Sakib"]
+  "cSpell.words": ["Hasan", "Sakib"],
+  "java.compile.nullAnalysis.mode": "automatic"
 }
