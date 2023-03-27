@@ -11,12 +11,47 @@ import {RNS3} from 'react-native-aws3';
 import {FileNameToDateStringWithExtensions} from '../components/date_time/FileNameToDateStringWithExtension';
 import {useNavigation} from '@react-navigation/native';
 import RouteName from '../constants/RouteName';
+import ImageCropPicker from 'react-native-image-crop-picker';
+import Button from '../components/buttons/Button';
 
 const FileUploadS3 = () => {
   const navigation = useNavigation();
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [uploadData, setUploadData] = useState();
+
+  const pickGalleryImage = async () => {
+    try {
+      setLoading(true);
+      const image = await ImageCropPicker.openPicker({
+        width: 300,
+        height: 250,
+        cropping: true,
+      });
+      //console.log('image =>', image);
+      setSelectedImage(image);
+      await uploadFile(image);
+      setLoading(false);
+    } catch (error) {
+      console.log('Pick gallery Image Error => ', error);
+    }
+  };
+  //pick camera for image
+  const pickCameraImage = async () => {
+    try {
+      setLoading(true);
+      const image = await ImageCropPicker.openCamera({
+        width: 300,
+        height: 250,
+        cropping: true,
+      });
+      //console.log('image =>', image);
+      setSelectedImage(image);
+      await uploadFile(image);
+      setLoading(false);
+    } catch (error) {
+      console.log('Pick gallery Image Error => ', error);
+    }
+  };
 
   const uploadImageToS3 = async (imagePath, newFilename, type) => {
     // Set your AWS S3 configuration
@@ -40,7 +75,8 @@ const FileUploadS3 = () => {
         if (response.status !== 201)
           throw new Error('Failed to upload image to S3');
         //console.log(response.body);
-        setUploadData(response.body);
+        const uploadData = response.body;
+        navigation.navigate(RouteName.fileList, {awsData: uploadData});
         /**
          * {
          *   postResponse: {
@@ -58,40 +94,15 @@ const FileUploadS3 = () => {
       });
   };
 
-  const pickGalleryImage = async () => {
-    try {
-      setLoading(true);
-      await SelectGalleryImage({setSelectedImage});
-      // uploaded image URL
-      console.log(selectedImage);
-      await uploadFile();
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  //pick camera for image
-  const pickCameraImage = async () => {
-    try {
-      setLoading(true);
-      await SelectCameraImage({setSelectedImage});
-      console.log(selectedImage);
-      await uploadFile();
-      setLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   // Upload the selected image to S3
-  const uploadFile = async () => {
+  const uploadFile = async image => {
     try {
-      let imagePath = selectedImage.path;
-      let fileName = selectedImage.path.split('/').pop();
-      let type = selectedImage.mime;
+      let imagePath = image.path;
+      let fileName = image.path.split('/').pop();
+      let type = image.mime;
       const newFilename = FileNameToDateStringWithExtensions(fileName);
+      //console.log('image path => ', imagePath);
       await uploadImageToS3(imagePath, newFilename, type);
-      navigation.navigate(RouteName.fileList, {awsData: uploadData});
     } catch (error) {
       console.log(error);
     }
@@ -134,6 +145,9 @@ const FileUploadS3 = () => {
                 pickCameraImage={pickCameraImage}
                 pickGalleryImage={pickGalleryImage}
               />
+              {/* <Button onPress={uploadFile} textColor={Colors.white}>
+                Upload
+              </Button> */}
             </View>
           </View>
         </>
