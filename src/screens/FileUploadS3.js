@@ -1,18 +1,13 @@
 import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import React, {useState} from 'react';
 import Heading from '../components/Heading';
-import {
-  SelectGalleryImage,
-  SelectCameraImage,
-} from '../services/ResourceSelection';
 import ImagePickerCom from '../components/images/ImagePicker';
 import Colors from '../constants/Colors';
-import {RNS3} from 'react-native-aws3';
 import {FileNameToDateStringWithExtensions} from '../components/date_time/FileNameToDateStringWithExtension';
 import {useNavigation} from '@react-navigation/native';
 import RouteName from '../constants/RouteName';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import Button from '../components/buttons/Button';
+import {S3} from 'aws-sdk';
 
 const FileUploadS3 = () => {
   const navigation = useNavigation();
@@ -34,14 +29,22 @@ const FileUploadS3 = () => {
     } catch (error) {
       console.log('Pick gallery Image Error => ', error);
     }
+    //clear cache
+    ImageCropPicker.clean()
+      .then(() => {
+        console.log('removed all tmp images from tmp directory');
+      })
+      .catch(e => {
+        alert(e);
+      });
   };
   //pick camera for image
   const pickCameraImage = async () => {
     try {
       setLoading(true);
       const image = await ImageCropPicker.openCamera({
-        width: 300,
-        height: 250,
+        width: 350,
+        height: 280,
         cropping: true,
       });
       //console.log('image =>', image);
@@ -51,58 +54,72 @@ const FileUploadS3 = () => {
     } catch (error) {
       console.log('Pick gallery Image Error => ', error);
     }
+    //clear cache
+    ImageCropPicker.clean()
+      .then(() => {
+        console.log('removed all tmp images from tmp directory');
+      })
+      .catch(e => {
+        alert(e);
+      });
   };
 
-  const uploadImageToS3 = async (imagePath, newFilename, type) => {
+  const uploadImageOnS3 = async (imagePath, newFilename, type) => {
     // Set your AWS S3 configuration
-    const file = {
-      uri: imagePath,
-      name: newFilename,
-      type: type,
-    };
+    const url = imagePath;
+    const bucketName = 'shahadot-tfp-hellosuperstars';
 
-    const options = {
-      keyPrefix: 'uploads/',
-      accessKey: 'AKIAXO5VROGDSZOY5JUX',
-      secretKey: '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',
+    const s3 = new S3({
+      accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
+      secretAccessKey: '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',
       region: 'ap-southeast-1',
-      bucket: 'shahadot-tfp-hellosuperstars',
-      successActionStatus: 201,
-    };
+    });
 
-    RNS3.put(file, options)
-      .then(response => {
-        if (response.status !== 201)
-          throw new Error('Failed to upload image to S3');
-        //console.log(response.body);
-        const uploadData = response.body;
-        navigation.navigate(RouteName.fileList, {awsData: uploadData});
-        /**
-         * {
-         *   postResponse: {
-         *     bucket: "your-bucket",
-         *     etag : "9f620878e06d28774406017480a59fd4",
-         *     key: "uploads/image.png",
-         *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-         *   }
-         * }
-         */
-      })
-      .progress(data => {
-        let progress = (data.loaded / data.total) * 100;
-        //console.log('Progress =>', progress);
-      });
+    try {
+      const response = await fetch(url);
+      const blob = await response.blob();
+      const fileKey = `${newFilename}`;
+
+      const uploadManage = s3.upload(
+        {
+          Bucket: bucketName,
+          Key: 'images/' + fileKey,
+          Body: blob,
+          ContentType: type,
+        },
+        (err, data) => {
+          if (err) {
+            console.log('error upload', err);
+            return;
+          }
+          //console.log('after upload data', data);
+          navigation.navigate(RouteName.fileList, {awsData: data});
+        },
+      );
+      //navigate to other screen
+      // uploadManage.on('httpUploadProgress', progress => {
+      //   // console.log(
+      //   //   `Uploading ${fileKey}... ${progress.loaded}/${progress.total}`,
+      //   // );
+      //   const progressPercentage = parseInt(
+      //     (progress.loaded * 100) / progress.total,
+      //   );
+      //   // console.log('buffer time__', progressPercentage + '%');
+      // });
+    } catch (error) {
+      console.log('Error uploading file:', error);
+    }
   };
 
   // Upload the selected image to S3
   const uploadFile = async image => {
     try {
-      let imagePath = image.path;
-      let fileName = image.path.split('/').pop();
-      let type = image.mime;
+      let imagePath = image?.path;
+      let fileName = image?.path.split('/').pop();
+      let type = image?.mime;
       const newFilename = FileNameToDateStringWithExtensions(fileName);
       //console.log('image path => ', imagePath);
-      await uploadImageToS3(imagePath, newFilename, type);
+      await uploadImageOnS3(imagePath, newFilename, type);
     } catch (error) {
       console.log(error);
     }
@@ -111,7 +128,11 @@ const FileUploadS3 = () => {
   return (
     <>
       {loading ? (
-        <ActivityIndicator color={Colors.primary} size={24} />
+        <ActivityIndicator
+          style={styles.indicator}
+          color={Colors.primary}
+          size={34}
+        />
       ) : (
         <>
           <View style={styles.container}>
@@ -145,9 +166,6 @@ const FileUploadS3 = () => {
                 pickCameraImage={pickCameraImage}
                 pickGalleryImage={pickGalleryImage}
               />
-              {/* <Button onPress={uploadFile} textColor={Colors.white}>
-                Upload
-              </Button> */}
             </View>
           </View>
         </>
@@ -164,5 +182,11 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.black,
     paddingVertical: 15,
     alignItems: 'center',
+  },
+  indicator: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flex: 1,
+    backgroundColor: Colors.black,
   },
 });

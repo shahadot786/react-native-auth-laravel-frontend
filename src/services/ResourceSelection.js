@@ -19,6 +19,14 @@ export const SelectGalleryImage = async ({
   } catch (error) {
     console.log('Pick gallery Image Error => ', error);
   }
+  //clear cache
+  ImageCropPicker.clean()
+    .then(() => {
+      console.log('removed all tmp images from tmp directory');
+    })
+    .catch(e => {
+      alert(e);
+    });
 };
 //select image from camera
 export const SelectCameraImage = async ({
@@ -36,6 +44,14 @@ export const SelectCameraImage = async ({
   } catch (error) {
     console.log(error);
   }
+  //clear cache
+  ImageCropPicker.clean()
+    .then(() => {
+      console.log('removed all tmp images from tmp directory');
+    })
+    .catch(e => {
+      alert(e);
+    });
 };
 //cancel or delete video
 export const CancelVideoHandler = async ({id, setPreviewVideo}) => {
