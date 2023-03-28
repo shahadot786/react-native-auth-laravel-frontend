@@ -13,7 +13,7 @@ import GreetingsDetails from '../screens/greetings/GreetingsDetails';
 import {View} from 'react-native';
 import Spinner from '../components/spinner/Spinner';
 import VideoCropperScreen from '../screens/greetings/VideoCropperScreen';
-import FileUploadS3 from '../screens/FileUploadS3';
+import AwsImageUploader from '../screens/AwsImageUploader';
 import FileUploadList from '../screens/FileUploadList';
 
 const Stack = createNativeStackNavigator();
@@ -85,7 +85,7 @@ const NavigationHome = () => {
             <>
               <Stack.Screen
                 name={RouteName.fileUpload}
-                component={FileUploadS3}
+                component={AwsImageUploader}
                 options={{headerShown: false}}
               />
               <Stack.Screen

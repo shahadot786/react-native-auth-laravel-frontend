@@ -52,67 +52,67 @@ const FileUploadList = ({route, navigation}) => {
   };
 
   //const list image
-  useEffect(() => {
-    const listImages = async () => {
-      var params = {
-        Bucket: 'shahadot-tfp-hellosuperstars',
-        MaxKeys: 10,
-      };
+  // useEffect(() => {
+  //   const listImages = async () => {
+  //     var params = {
+  //       Bucket: 'shahadot-tfp-hellosuperstars',
+  //       MaxKeys: 10,
+  //     };
 
-      const s3 = new S3({
-        accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
-        secretAccessKey: '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',
-        region: 'ap-southeast-1',
-      });
+  //     const s3 = new S3({
+  //       accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
+  //       secretAccessKey: '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',
+  //       region: 'ap-southeast-1',
+  //     });
 
-      try {
-        const list = s3.listObjectsV2(params, (err, data) => {
-          if (err) console.log(err, err.stack); // an error occurred
-          else {
-            let content = data?.Contents;
-            setContentData(content);
-            console.log('contents =>', content);
-          } // successful response
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  //     try {
+  //       const list = s3.listObjectsV2(params, (err, data) => {
+  //         if (err) console.log(err, err.stack); // an error occurred
+  //         else {
+  //           let content = data?.Contents;
+  //           setContentData(content);
+  //           console.log('contents =>', content);
+  //         } // successful response
+  //       });
+  //     } catch (error) {
+  //       console.log(error);
+  //     }
+  //   };
 
-    listImages();
-  }, []);
+  //   listImages();
+  // }, []);
 
-  const renderItem = ({item}) => {
-    const url = item?.Key;
-    const imageUrl = defaultUrl + url;
-    <View>
-      <Image
-        source={{uri: imageUrl}}
-        style={{
-          width: 350,
-          height: 250,
-          marginVertical: 15,
-          borderRadius: 15,
-        }}
-      />
-      <TouchableOpacity
-        activeOpacity={0.6}
-        onPress={() => deleteImageHandler(route.params.awsData?.Key)}>
-        <Icon name="trash" size={24} />
-      </TouchableOpacity>
-    </View>;
-  };
+  // const renderItem = ({item}) => {
+  //   const url = item?.Key;
+  //   const imageUrl = defaultUrl + url;
+  //   <View>
+  //     <Image
+  //       source={{uri: imageUrl}}
+  //       style={{
+  //         width: 350,
+  //         height: 250,
+  //         marginVertical: 15,
+  //         borderRadius: 15,
+  //       }}
+  //     />
+  //     <TouchableOpacity
+  //       activeOpacity={0.6}
+  //       onPress={() => deleteImageHandler(route.params.awsData?.Key)}>
+  //       <Icon name="trash" size={24} />
+  //     </TouchableOpacity>
+  //   </View>;
+  // };
 
   return (
     <View style={styles.container}>
       <Text style={{textAlign: 'center', color: 'white', fontSize: 24}}>
         Image List
       </Text>
-      <FlatList
+      {/* <FlatList
         data={contentData}
         renderItem={renderItem}
         keyExtractor={item => item.Key}
-      />
+      /> */}
     </View>
   );
 };

@@ -3,16 +3,13 @@ import React, {useState} from 'react';
 import Heading from '../components/Heading';
 import ImagePickerCom from '../components/images/ImagePicker';
 import Colors from '../constants/Colors';
-import {FileNameToDateStringWithExtensions} from '../components/date_time/FileNameToDateStringWithExtension';
-import {useNavigation} from '@react-navigation/native';
-import RouteName from '../constants/RouteName';
 import ImageCropPicker from 'react-native-image-crop-picker';
-import {S3} from 'aws-sdk';
+import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
 
-const FileUploadS3 = () => {
-  const navigation = useNavigation();
+const AwsImageUploader = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState(0);
 
   const pickGalleryImage = async () => {
     try {
@@ -23,8 +20,9 @@ const FileUploadS3 = () => {
         cropping: true,
       });
       //console.log('image =>', image);
-      setSelectedImage(image);
-      await uploadFile(image);
+      const response = await UploadFileOnS3(image);
+      setSelectedImage(response?.Location);
+      console.log('Response => ', response);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Image Error => ', error);
@@ -48,8 +46,9 @@ const FileUploadS3 = () => {
         cropping: true,
       });
       //console.log('image =>', image);
-      setSelectedImage(image);
-      await uploadFile(image);
+      const response = await UploadFileOnS3(image);
+      console.log(response);
+      //setSelectedImage(response?.Location);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Image Error => ', error);
@@ -62,67 +61,6 @@ const FileUploadS3 = () => {
       .catch(e => {
         alert(e);
       });
-  };
-
-  const uploadImageOnS3 = async (imagePath, newFilename, type) => {
-    // Set your AWS S3 configuration
-    const url = imagePath;
-    const bucketName = 'shahadot-tfp-hellosuperstars';
-
-    const s3 = new S3({
-      accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
-      secretAccessKey: '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',
-      region: 'ap-southeast-1',
-    });
-
-    try {
-      const response = await fetch(url);
-      const blob = await response.blob();
-      const fileKey = `${newFilename}`;
-
-      const uploadManage = s3.upload(
-        {
-          Bucket: bucketName,
-          Key: 'images/' + fileKey,
-          Body: blob,
-          ContentType: type,
-        },
-        (err, data) => {
-          if (err) {
-            console.log('error upload', err);
-            return;
-          }
-          //console.log('after upload data', data);
-          navigation.navigate(RouteName.fileList, {awsData: data});
-        },
-      );
-      //navigate to other screen
-      // uploadManage.on('httpUploadProgress', progress => {
-      //   // console.log(
-      //   //   `Uploading ${fileKey}... ${progress.loaded}/${progress.total}`,
-      //   // );
-      //   const progressPercentage = parseInt(
-      //     (progress.loaded * 100) / progress.total,
-      //   );
-      //   // console.log('buffer time__', progressPercentage + '%');
-      // });
-    } catch (error) {
-      console.log('Error uploading file:', error);
-    }
-  };
-
-  // Upload the selected image to S3
-  const uploadFile = async image => {
-    try {
-      let imagePath = image?.path;
-      let fileName = image?.path.split('/').pop();
-      let type = image?.mime;
-      const newFilename = FileNameToDateStringWithExtensions(fileName);
-      //console.log('image path => ', imagePath);
-      await uploadImageOnS3(imagePath, newFilename, type);
-    } catch (error) {
-      console.log(error);
-    }
   };
 
   return (
@@ -144,7 +82,7 @@ const FileUploadS3 = () => {
               {selectedImage && (
                 <>
                   <Image
-                    source={{uri: selectedImage.path}}
+                    source={{uri: selectedImage}}
                     style={{
                       width: 350,
                       height: 250,
@@ -174,7 +112,7 @@ const FileUploadS3 = () => {
   );
 };
 
-export default FileUploadS3;
+export default AwsImageUploader;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
