@@ -1,26 +1,32 @@
-import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
+import {View, StyleSheet, Image, Text, TouchableOpacity} from 'react-native';
 import React, {useState} from 'react';
 import Heading from '../components/Heading';
 import ImagePickerCom from '../components/images/ImagePicker';
 import Colors from '../constants/Colors';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
+import CustomProgressBar from '../components/progress/CustomProgressBar';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
 
 const AwsImageUploader = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
-
+  const [deleteKey, setDeleteKey] = useState();
+  const [progress, setProgress] = useState(0);
   const pickGalleryImage = async () => {
     try {
       setLoading(true);
+      setProgress(0);
       const image = await ImageCropPicker.openPicker({
         width: 300,
         height: 250,
         cropping: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(image, 'image');
+      const response = await UploadFileOnS3(image, 'image', setProgress);
       setSelectedImage(response?.uploadResponse?.Location);
+      setDeleteKey(response?.uploadResponse?.Key);
       //console.log('Response => ', response);
       setLoading(false);
     } catch (error) {
@@ -39,13 +45,17 @@ const AwsImageUploader = () => {
   const pickCameraImage = async () => {
     try {
       setLoading(true);
+      setProgress(0);
       const image = await ImageCropPicker.openCamera({
         width: 350,
         height: 280,
         cropping: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(image, 'image');
+      const response = await UploadFileOnS3(image, 'image', setProgress);
+      setSelectedImage(response?.uploadResponse?.Location);
+      setDeleteKey(response?.uploadResponse?.Key);
+      setLoading(false);
       //console.log(response);
       //       {
       //   "uploadResponse": {
@@ -57,8 +67,6 @@ const AwsImageUploader = () => {
       //     "key": "image/1679986477859.jpg"
       //   }
       // }
-      setSelectedImage(response?.uploadResponse?.Location);
-      setLoading(false);
     } catch (error) {
       console.log('Pick camera Image Error => ', error);
     }
@@ -75,11 +83,19 @@ const AwsImageUploader = () => {
   return (
     <>
       {loading ? (
-        <ActivityIndicator
-          style={styles.indicator}
-          color={Colors.primary}
-          size={34}
-        />
+        <>
+          <View style={styles.indicator}>
+            <Text
+              style={{
+                color: Colors.primary,
+                fontSize: 24,
+                textAlign: 'center',
+              }}>
+              {Math.round(progress * 100) + ' %'}
+            </Text>
+            <CustomProgressBar progressBar={progress} />
+          </View>
+        </>
       ) : (
         <>
           <View style={styles.container}>
@@ -100,11 +116,13 @@ const AwsImageUploader = () => {
                     }}
                   />
                   {/* <TouchableOpacity
-                onPress={cancelHandler}
-                style={styles.cancelBtn}
-                activeOpacity={0.6}>
-                <Icon name="close" size={30} color={Colors.primary} />
-              </TouchableOpacity> */}
+                    onCancelPress={() =>
+                      DeleteFileHandler(deleteKey, setSelectedImage)
+                    }
+                    style={styles.cancelBtn}
+                    activeOpacity={0.6}>
+                    <Icon name="cancel" size={30} color={Colors.primary} />
+                  </TouchableOpacity> */}
                 </>
               )}
               {/* image */}
@@ -136,5 +154,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     backgroundColor: Colors.black,
+  },
+  cancelBtn: {
+    position: 'absolute',
+    right: -5,
+    top: 10,
+    marginRight: 5,
+    marginTop: 5,
+    zIndex: 111111,
   },
 });

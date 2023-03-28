@@ -21,7 +21,7 @@ const CustomProgressBar = ({progressBar, progress, totalSize, currentSize}) => {
             marginTop: 5,
             fontWeight: 'bold',
           }}>
-          {Math.round(progress)}%
+          {Math.round(progress) * 100}%
         </Text>
       )}
       {/* <Text style={{color: Colors.white, fontSize: 20}}>

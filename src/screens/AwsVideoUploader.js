@@ -1,4 +1,4 @@
-import {View, StyleSheet, Image, ActivityIndicator, Text} from 'react-native';
+import {View, StyleSheet, Text} from 'react-native';
 import React, {useState} from 'react';
 import Heading from '../components/Heading';
 import Colors from '../constants/Colors';
@@ -6,8 +6,8 @@ import ImageCropPicker from 'react-native-image-crop-picker';
 import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
 import VideoPicker from '../components/Video/VideoPicker';
 import VideoPlayer from '../components/Video/VideoPlayer';
-import {S3} from 'aws-sdk';
 import CustomProgressBar from '../components/progress/CustomProgressBar';
+import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
 
 const AwsVideoUploader = () => {
   const [previewVideo, setPreviewVideo] = useState(false);
@@ -18,6 +18,7 @@ const AwsVideoUploader = () => {
   const pickGalleryVideo = async () => {
     try {
       setLoading(true);
+      setProgress(0);
       const video = await ImageCropPicker.openPicker({
         mediaType: 'video',
         compressVideoPreset: 'LowQuality',
@@ -44,13 +45,14 @@ const AwsVideoUploader = () => {
   const handleCameraVideo = async () => {
     try {
       setLoading(true);
+      setProgress(0);
       const video = await ImageCropPicker.openCamera({
         mediaType: 'video',
         compressVideoPreset: 'LowQuality',
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(video, 'video');
+      const response = await UploadFileOnS3(video, 'video', setProgress);
       //console.log(response);
       //       {
       //   "uploadResponse": {
@@ -78,43 +80,24 @@ const AwsVideoUploader = () => {
       });
   };
 
-  //cancel button handler
-  const cancelHandler = async () => {
-    try {
-      const bucketName = 'shahadot-tfp-hellosuperstars';
-      const s3 = new S3({
-        accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
-        secretAccessKey: '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',
-        region: 'ap-southeast-1',
-      });
-
-      const deleteParams = {
-        Bucket: bucketName,
-        Key: deleteKey,
-      };
-      const deleteResponse = s3.deleteObject(deleteParams, (err, data) => {
-        if (err) console.log(err, err.stack);
-        else {
-          console.log(data);
-          setPreviewVideo(false);
-        }
-      });
-      //console.log('delete response => ', deleteResponse);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  //set progress value
+  // const uploadedBytes = progress?.loaded;
+  // const totalBytes = progress?.total;
+  // const progressValue = uploadedBytes / totalBytes;
 
   return (
     <>
       {loading ? (
         <>
-          {/* <ActivityIndicator
-            style={styles.indicator}
-            color={Colors.primary}
-            size={34}
-          /> */}
           <View style={styles.indicator}>
+            <Text
+              style={{
+                color: Colors.primary,
+                fontSize: 24,
+                textAlign: 'center',
+              }}>
+              {Math.round(progress * 100) + ' %'}
+            </Text>
             <CustomProgressBar progressBar={progress} />
           </View>
         </>
@@ -130,15 +113,11 @@ const AwsVideoUploader = () => {
                 <>
                   <VideoPlayer
                     isCancel
-                    onCancelPress={cancelHandler}
+                    onCancelPress={() =>
+                      DeleteFileHandler(deleteKey, setPreviewVideo)
+                    }
                     videoUrl={previewVideo}
                   />
-                  {/* <TouchableOpacity
-                onPress={cancelHandler}
-                style={styles.cancelBtn}
-                activeOpacity={0.6}>
-                <Icon name="close" size={30} color={Colors.primary} />
-              </TouchableOpacity> */}
                 </>
               )}
               {/* video */}

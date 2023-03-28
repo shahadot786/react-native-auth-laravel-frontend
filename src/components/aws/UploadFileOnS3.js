@@ -51,7 +51,7 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
         },
       };
       const deleteResponse = await s3.deleteObjects(deleteParams).promise();
-      console.log('Previous file(s) deleted successfully', deleteResponse);
+      //console.log('Previous file(s) deleted successfully', deleteResponse);
     }
 
     // Upload the new file with progress
@@ -66,7 +66,7 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
         progressCallback(progressData);
       })
       .promise();
-    console.log('File uploaded successfully', uploadResponse);
+    //console.log('File uploaded successfully', uploadResponse);
 
     // Return the URL of the new file
     return {uploadResponse};
