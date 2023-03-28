@@ -1,7 +1,7 @@
 import {S3} from 'aws-sdk';
 import {FileNameToDateStringWithExtensions} from '../date_time/FileNameToDateStringWithExtension';
 
-export const UploadFileOnS3 = async filePath => {
+export const UploadFileOnS3 = async (filePath, fileType) => {
   const url = filePath?.path;
   const bucketName = 'shahadot-tfp-hellosuperstars';
 
@@ -21,7 +21,7 @@ export const UploadFileOnS3 = async filePath => {
 
   const uploadParams = {
     Bucket: bucketName,
-    Key: 'uploads/' + fileKey,
+    Key: `${fileType}/${fileKey}`,
     Body: blob,
     ContentType: type,
     ACL: 'public-read',
@@ -31,12 +31,13 @@ export const UploadFileOnS3 = async filePath => {
     // Check if previous file exists and delete it
     const listParams = {
       Bucket: bucketName,
-      Prefix: 'uploads/',
+      Prefix: `${fileType}/`,
     };
     const fileList = await s3.listObjects(listParams).promise();
     const deleteKeys = fileList.Contents.filter(
       file =>
-        file.Key.includes('uploads/') && file.Key !== `uploads/${fileKey}`,
+        file.Key.includes(`${fileType}/`) &&
+        file.Key !== `${fileType}/${fileKey}`,
     ).map(file => ({Key: file.Key}));
     if (deleteKeys.length > 0) {
       const deleteParams = {

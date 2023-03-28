@@ -9,7 +9,6 @@ import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
 const AwsImageUploader = () => {
   const [selectedImage, setSelectedImage] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   const pickGalleryImage = async () => {
     try {
@@ -20,9 +19,9 @@ const AwsImageUploader = () => {
         cropping: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(image);
-      setSelectedImage(response?.Location);
-      console.log('Response => ', response);
+      const response = await UploadFileOnS3(image, 'image');
+      setSelectedImage(response?.uploadResponse?.Location);
+      //console.log('Response => ', response);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Image Error => ', error);
@@ -46,12 +45,22 @@ const AwsImageUploader = () => {
         cropping: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(image);
-      console.log(response);
-      //setSelectedImage(response?.Location);
+      const response = await UploadFileOnS3(image, 'image');
+      //console.log(response);
+      //       {
+      //   "uploadResponse": {
+      //     "Bucket": "shahadot-tfp-hellosuperstars",
+      //     "ETag": "\"64382f78d5ad556e83704f508cd757a3\"",
+      //     "Key": "image/1679986477859.jpg",
+      //     "Location": "https://shahadot-tfp-hellosuperstars.s3.ap-southeast-1.amazonaws.com/image/1679986477859.jpg",
+      //     "ServerSideEncryption": "AES256",
+      //     "key": "image/1679986477859.jpg"
+      //   }
+      // }
+      setSelectedImage(response?.uploadResponse?.Location);
       setLoading(false);
     } catch (error) {
-      console.log('Pick gallery Image Error => ', error);
+      console.log('Pick camera Image Error => ', error);
     }
     //clear cache
     ImageCropPicker.clean()

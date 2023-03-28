@@ -1,16 +1,17 @@
 import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
 import React, {useState} from 'react';
 import Heading from '../components/Heading';
-import ImagePickerCom from '../components/images/ImagePicker';
 import Colors from '../constants/Colors';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
 import VideoPicker from '../components/Video/VideoPicker';
 import VideoPlayer from '../components/Video/VideoPlayer';
+import {S3} from 'aws-sdk';
 
 const AwsVideoUploader = () => {
   const [previewVideo, setPreviewVideo] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [deleteKey, setDeleteKey] = useState();
 
   const pickGalleryVideo = async () => {
     try {
@@ -21,17 +22,17 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(video);
-      setPreviewVideo(response?.Location);
-      console.log('Response => ', response);
+      const response = await UploadFileOnS3(video, 'video');
+      setPreviewVideo(response?.uploadResponse?.Location);
+      //console.log('Response => ', response);
       setLoading(false);
     } catch (error) {
-      console.log('Pick gallery Image Error => ', error);
+      console.log('Pick gallery Video Error => ', error);
     }
     //clear cache
     ImageCropPicker.clean()
       .then(() => {
-        console.log('removed all tmp images from tmp directory');
+        console.log('removed all tmp videos from tmp directory');
       })
       .catch(e => {
         alert(e);
@@ -47,21 +48,57 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(video);
+      const response = await UploadFileOnS3(video, 'video');
       //console.log(response);
+      //       {
+      //   "uploadResponse": {
+      //     "Bucket": "shahadot-tfp-hellosuperstars",
+      //     "ETag": "\"aca9754630e432b3d640c346b260898b\"",
+      //     "Key": "video/1679987013435.mp4",
+      //     "Location": "https://shahadot-tfp-hellosuperstars.s3.ap-southeast-1.amazonaws.com/video/1679987013435.mp4",
+      //     "ServerSideEncryption": "AES256",
+      //     "key": "video/1679987013435.mp4"
+      //   }
+      // }
       setPreviewVideo(response?.uploadResponse?.Location);
+      setDeleteKey(response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
-      console.log('Pick gallery Image Error => ', error);
+      console.log('Pick gallery Video Error => ', error);
     }
     //clear cache
     ImageCropPicker.clean()
       .then(() => {
-        console.log('removed all tmp images from tmp directory');
+        console.log('removed all tmp videos from tmp directory');
       })
       .catch(e => {
         alert(e);
       });
+  };
+
+  //cancel button handler
+  const cancelHandler = async () => {
+    try {
+      const bucketName = 'shahadot-tfp-hellosuperstars';
+      const s3 = new S3({
+        accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
+        secretAccessKey: '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',
+        region: 'ap-southeast-1',
+      });
+
+      const deleteParams = {
+        Bucket: bucketName,
+        Key: deleteKey,
+      };
+      const deleteResponse = s3.deleteObject(deleteParams, (err, data) => {
+        if (err) console.log(err, err.stack);
+        else console.log(data);
+      });
+      console.log('delete response => ', deleteResponse);
+      setPreviewVideo(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -83,7 +120,8 @@ const AwsVideoUploader = () => {
               {previewVideo && (
                 <>
                   <VideoPlayer
-                    // onCancelPress={cancelHandler}
+                    isCancel
+                    onCancelPress={cancelHandler}
                     videoUrl={previewVideo}
                   />
                   {/* <TouchableOpacity
