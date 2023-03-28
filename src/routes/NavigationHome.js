@@ -15,6 +15,7 @@ import Spinner from '../components/spinner/Spinner';
 import VideoCropperScreen from '../screens/greetings/VideoCropperScreen';
 import AwsImageUploader from '../screens/AwsImageUploader';
 import FileUploadList from '../screens/FileUploadList';
+import AwsVideoUploader from '../screens/AwsVideoUploader';
 
 const Stack = createNativeStackNavigator();
 
@@ -84,8 +85,18 @@ const NavigationHome = () => {
           ) : (
             <>
               <Stack.Screen
+                name={RouteName.fileList}
+                component={FileUploadList}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
                 name={RouteName.fileUpload}
                 component={AwsImageUploader}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name={RouteName.videoUpload}
+                component={AwsVideoUploader}
                 options={{headerShown: false}}
               />
               <Stack.Screen
@@ -96,11 +107,6 @@ const NavigationHome = () => {
               <Stack.Screen
                 name={RouteName.signUp}
                 component={SignUpScreen}
-                options={{headerShown: false}}
-              />
-              <Stack.Screen
-                name={RouteName.fileList}
-                component={FileUploadList}
                 options={{headerShown: false}}
               />
             </>

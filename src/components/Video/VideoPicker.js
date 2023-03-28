@@ -3,7 +3,6 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Colors from '../../constants/Colors';
 
-
 const VideoPicker = ({validateVideo, handleCameraVideo, pickGalleryVideo}) => {
   return (
     <View style={[styles.button, styles.rowView]}>
@@ -14,7 +13,7 @@ const VideoPicker = ({validateVideo, handleCameraVideo, pickGalleryVideo}) => {
       <TouchableOpacity activeOpacity={0.6} onPress={pickGalleryVideo}>
         <Icon name="video-camera" size={22} color={Colors.white} />
       </TouchableOpacity>
-      {!validateVideo && (
+      {validateVideo && (
         <Text
           style={{
             color: Colors.danger,

@@ -14,4 +14,5 @@ export default RouteName = {
   greetingForm: 'GreetingForm',
   fileUpload: 'FileUpload',
   fileList: 'FileList',
+  videoUpload: 'VideoUpload',
 };

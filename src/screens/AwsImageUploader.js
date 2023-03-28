@@ -120,6 +120,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.black,
     paddingVertical: 15,
     alignItems: 'center',
+    paddingTop: 40,
   },
   indicator: {
     justifyContent: 'center',
