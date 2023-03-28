@@ -1,24 +1,27 @@
 import {S3} from 'aws-sdk';
 import {FileNameToDateStringWithExtensions} from '../date_time/FileNameToDateStringWithExtension';
 
-export const UploadFileOnS3 = async (filePath, fileType) => {
+export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
+  //extract the file path and name
   const url = filePath?.path;
-  const bucketName = 'shahadot-tfp-hellosuperstars';
-
   const fileName = filePath?.path.split('/').pop();
   const type = filePath?.mime;
   const newFilename = FileNameToDateStringWithExtensions(fileName);
 
+  //aws s3 configuration
+  const bucketName = 'shahadot-tfp-hellosuperstars';
   const s3 = new S3({
     accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
     secretAccessKey: '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',
     region: 'ap-southeast-1',
   });
 
+  //fetch the url
   const response = await fetch(url);
   const blob = await response.blob();
   const fileKey = `${newFilename}`;
 
+  //upload params
   const uploadParams = {
     Bucket: bucketName,
     Key: `${fileType}/${fileKey}`,
@@ -51,7 +54,7 @@ export const UploadFileOnS3 = async (filePath, fileType) => {
       console.log('Previous file(s) deleted successfully', deleteResponse);
     }
 
-    // Upload the new file
+    // Upload the new file with progress
     const uploadResponse = await s3
       .upload(uploadParams)
       .on('httpUploadProgress', progress => {
@@ -59,7 +62,8 @@ export const UploadFileOnS3 = async (filePath, fileType) => {
         const totalBytes = progress.total;
         const percentCompleted = Math.round((uploadedBytes / totalBytes) * 100);
         console.log(`Uploaded ${percentCompleted}%`);
-        const progressBar = uploadedBytes / totalBytes;
+        const progressData = uploadedBytes / totalBytes;
+        progressCallback(progressData);
       })
       .promise();
     console.log('File uploaded successfully', uploadResponse);

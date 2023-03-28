@@ -1,4 +1,4 @@
-import {View, StyleSheet, Image, ActivityIndicator} from 'react-native';
+import {View, StyleSheet, Image, ActivityIndicator, Text} from 'react-native';
 import React, {useState} from 'react';
 import Heading from '../components/Heading';
 import Colors from '../constants/Colors';
@@ -7,11 +7,13 @@ import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
 import VideoPicker from '../components/Video/VideoPicker';
 import VideoPlayer from '../components/Video/VideoPlayer';
 import {S3} from 'aws-sdk';
+import CustomProgressBar from '../components/progress/CustomProgressBar';
 
 const AwsVideoUploader = () => {
   const [previewVideo, setPreviewVideo] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleteKey, setDeleteKey] = useState();
+  const [progress, setProgress] = useState(0);
 
   const pickGalleryVideo = async () => {
     try {
@@ -22,9 +24,9 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(video, 'video');
+      const response = await UploadFileOnS3(video, 'video', setProgress);
       setPreviewVideo(response?.uploadResponse?.Location);
-      //console.log('Response => ', response);
+      setDeleteKey(response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
@@ -92,10 +94,12 @@ const AwsVideoUploader = () => {
       };
       const deleteResponse = s3.deleteObject(deleteParams, (err, data) => {
         if (err) console.log(err, err.stack);
-        else console.log(data);
+        else {
+          console.log(data);
+          setPreviewVideo(false);
+        }
       });
-      console.log('delete response => ', deleteResponse);
-      setPreviewVideo(false);
+      //console.log('delete response => ', deleteResponse);
     } catch (error) {
       console.log(error);
     }
@@ -104,11 +108,16 @@ const AwsVideoUploader = () => {
   return (
     <>
       {loading ? (
-        <ActivityIndicator
-          style={styles.indicator}
-          color={Colors.primary}
-          size={34}
-        />
+        <>
+          {/* <ActivityIndicator
+            style={styles.indicator}
+            color={Colors.primary}
+            size={34}
+          /> */}
+          <View style={styles.indicator}>
+            <CustomProgressBar progressBar={progress} />
+          </View>
+        </>
       ) : (
         <>
           <View style={styles.container}>

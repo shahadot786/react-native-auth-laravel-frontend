@@ -13,22 +13,26 @@ const CustomProgressBar = ({progressBar, progress, totalSize, currentSize}) => {
         height={10}
         color={Colors.primary}
       />
-      <Text
-        style={{
-          color: Colors.primary,
-          fontSize: 20,
-          marginTop: 5,
-          fontWeight: 'bold',
-        }}>
-        {Math.round(progress)}%
-      </Text>
+      {progress && (
+        <Text
+          style={{
+            color: Colors.primary,
+            fontSize: 20,
+            marginTop: 5,
+            fontWeight: 'bold',
+          }}>
+          {Math.round(progress)}%
+        </Text>
+      )}
       {/* <Text style={{color: Colors.white, fontSize: 20}}>
                 Size: {(totalSize / 1000000).toFixed(2)} MB
               </Text> */}
-      <Text style={{color: Colors.green, fontSize: 15}}>
-        Uploaded:{(totalSize / 1000000).toFixed(2)} MB /{' '}
-        {(currentSize / 1000000).toFixed(2)} MB
-      </Text>
+      {totalSize && (
+        <Text style={{color: Colors.green, fontSize: 15}}>
+          Uploaded:{(totalSize / 1000000).toFixed(2)} MB /{' '}
+          {(currentSize / 1000000).toFixed(2)} MB
+        </Text>
+      )}
     </View>
   );
 };
