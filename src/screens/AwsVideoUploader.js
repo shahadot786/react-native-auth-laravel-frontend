@@ -8,6 +8,8 @@ import VideoPicker from '../components/Video/VideoPicker';
 import VideoPlayer from '../components/Video/VideoPlayer';
 import CustomProgressBar from '../components/progress/CustomProgressBar';
 import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
+import {HlsConverter} from '../components/aws/HlsConverter';
+import {HlsVideoUploader} from '../components/aws/HlsVideoUploader';
 
 const AwsVideoUploader = () => {
   const [preview, setPreview] = useState(false);
@@ -25,9 +27,13 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(video, 'video', setProgress);
-      setPreview(response?.uploadResponse?.Location);
-      setDeleteKey(response?.uploadResponse?.Key);
+      const hlsResponse = await HlsConverter(video);
+      //console.log('Hls Response =>', hlsResponse);
+      const videoUri = `file://${hlsResponse}`;
+      setPreview(videoUri);
+      // const response = await HlsVideoUploader(videoUri, 'video', setProgress);
+      // setPreview(response?.uploadResponse?.Location);
+      // setDeleteKey(response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
@@ -52,7 +58,14 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const response = await UploadFileOnS3(video, 'video', setProgress);
+      const hlsResponse = await HlsConverter(video);
+      console.log('Hls Response =>', hlsResponse);
+      const videoUri = `file://${hlsResponse}`;
+      setPreview(videoUri);
+      const response = await HlsVideoUploader(videoUri, 'video', setProgress);
+      // setPreview(response?.uploadResponse?.Location);
+      // setDeleteKey(response?.uploadResponse?.Key);
+      setLoading(false);
       //console.log(response);
       //       {
       //   "uploadResponse": {
@@ -64,9 +77,6 @@ const AwsVideoUploader = () => {
       //     "key": "video/1679987013435.mp4"
       //   }
       // }
-      setPreview(response?.uploadResponse?.Location);
-      setDeleteKey(response?.uploadResponse?.Key);
-      setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
     }
@@ -79,7 +89,7 @@ const AwsVideoUploader = () => {
         alert(e);
       });
   };
-
+  console.log('file data =>', preview);
   //set progress value
   // const uploadedBytes = progress?.loaded;
   // const totalBytes = progress?.total;

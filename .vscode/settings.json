@@ -1,4 +1,5 @@
 {
-  "cSpell.words": ["Hasan", "Sakib"],
-  "java.compile.nullAnalysis.mode": "automatic"
+  "cSpell.words": ["Hasan", "Sakib", "toannexb"],
+  "java.compile.nullAnalysis.mode": "automatic",
+  "java.configuration.updateBuildConfiguration": "interactive"
 }

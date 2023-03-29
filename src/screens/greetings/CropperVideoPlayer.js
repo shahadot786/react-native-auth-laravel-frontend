@@ -16,14 +16,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Slider from '@react-native-community/slider';
 import Button from '../../components/buttons/Button';
 import {FormatTime} from '../../services/FormatTime';
-// import {FFmpegKit, FFmpegKitConfig} from 'ffmpeg-kit-react-native';
+import {FFmpegKit, FFmpegKitConfig} from 'ffmpeg-kit-react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import {CurrentDataTimeString} from '../../components/date_time/CurrentDataTimeString';
 
 const width = Dimensions.get('screen').width;
 const height = Dimensions.get('screen').height;
 // initialize FFmpegKit
-// FFmpegKitConfig.init();
+FFmpegKitConfig.init();
 
 const CropperVideoPlayer = ({videoUrl, onTrimVideo}) => {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -76,15 +76,15 @@ const CropperVideoPlayer = ({videoUrl, onTrimVideo}) => {
         RNFetchBlob.fs.dirs.CacheDir
       }/${CurrentDataTimeString()}.mp4`;
       // Trim the video using ffmpeg-kit
-      // await FFmpegKit.execute(
-      //   `-i ${input} -ss ${startTime} -to ${endTime} -filter:v scale=1280:720 ${output}`,
-      // );
+      await FFmpegKit.execute(
+        `-i ${input} -ss ${startTime} -to ${endTime} -filter:v scale=1280:720 ${output}`,
+      );
       // Set the trimmed video path to state variable
-      //console.log('Output of trimmer:', output);
+      console.log('Output of trimmer:', output);
       setTrimLoading(false);
       onTrimVideo(output);
       //Alert.alert('Success', `Trimmed and compressed video saved to ${output}`);
-      //console.log('Output =>', output);
+      console.log('Output =>', output);
     } catch (err) {
       setTrimLoading(false);
       console.log('Error', err.message);
