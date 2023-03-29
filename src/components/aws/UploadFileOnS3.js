@@ -1,5 +1,11 @@
 import {S3} from 'aws-sdk';
 import {FileNameToDateStringWithExtensions} from '../date_time/FileNameToDateStringWithExtension';
+import {
+  AWS_BUCKET_NAME,
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_REGION,
+} from '@env';
 
 export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
   //extract the file path and name
@@ -9,11 +15,11 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
   const newFilename = FileNameToDateStringWithExtensions(fileName);
 
   //aws s3 configuration
-  const bucketName = 'shahadot-tfp-hellosuperstars';
+  const bucketName = AWS_BUCKET_NAME;
   const s3 = new S3({
-    accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
-    secretAccessKey: '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',
-    region: 'ap-southeast-1',
+    accessKeyId: AWS_ACCESS_KEY_ID,
+    secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    region: AWS_REGION,
   });
 
   //fetch the url
@@ -61,7 +67,7 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
         const uploadedBytes = progress.loaded;
         const totalBytes = progress.total;
         const percentCompleted = Math.round((uploadedBytes / totalBytes) * 100);
-        console.log(`Uploaded ${percentCompleted}%`);
+        //console.log(`Uploaded ${percentCompleted}%`);
         const progressData = uploadedBytes / totalBytes;
         progressCallback(progressData);
       })

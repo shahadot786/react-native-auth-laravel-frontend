@@ -10,7 +10,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
 
 const AwsImageUploader = () => {
-  const [selectedImage, setSelectedImage] = useState(null);
+  const [preview, setPreview] = useState(null);
   const [loading, setLoading] = useState(false);
   const [deleteKey, setDeleteKey] = useState();
   const [progress, setProgress] = useState(0);
@@ -25,7 +25,7 @@ const AwsImageUploader = () => {
       });
       //console.log('image =>', image);
       const response = await UploadFileOnS3(image, 'image', setProgress);
-      setSelectedImage(response?.uploadResponse?.Location);
+      setPreview(response?.uploadResponse?.Location);
       setDeleteKey(response?.uploadResponse?.Key);
       //console.log('Response => ', response);
       setLoading(false);
@@ -53,7 +53,7 @@ const AwsImageUploader = () => {
       });
       //console.log('image =>', image);
       const response = await UploadFileOnS3(image, 'image', setProgress);
-      setSelectedImage(response?.uploadResponse?.Location);
+      setPreview(response?.uploadResponse?.Location);
       setDeleteKey(response?.uploadResponse?.Key);
       setLoading(false);
       //console.log(response);
@@ -104,10 +104,10 @@ const AwsImageUploader = () => {
             {/* image preview */}
             <View>
               {/* image preview */}
-              {selectedImage && (
+              {preview && (
                 <>
                   <Image
-                    source={{uri: selectedImage}}
+                    source={{uri: preview}}
                     style={{
                       width: 350,
                       height: 250,
@@ -115,14 +115,12 @@ const AwsImageUploader = () => {
                       borderRadius: 15,
                     }}
                   />
-                  {/* <TouchableOpacity
-                    onCancelPress={() =>
-                      DeleteFileHandler(deleteKey, setSelectedImage)
-                    }
+                  <TouchableOpacity
+                    onPress={() => DeleteFileHandler(deleteKey, setPreview)}
                     style={styles.cancelBtn}
                     activeOpacity={0.6}>
                     <Icon name="cancel" size={30} color={Colors.primary} />
-                  </TouchableOpacity> */}
+                  </TouchableOpacity>
                 </>
               )}
               {/* image */}

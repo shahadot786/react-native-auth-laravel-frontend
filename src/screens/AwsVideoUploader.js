@@ -10,7 +10,7 @@ import CustomProgressBar from '../components/progress/CustomProgressBar';
 import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
 
 const AwsVideoUploader = () => {
-  const [previewVideo, setPreviewVideo] = useState(false);
+  const [preview, setPreview] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleteKey, setDeleteKey] = useState();
   const [progress, setProgress] = useState(0);
@@ -26,7 +26,7 @@ const AwsVideoUploader = () => {
       });
       //console.log('image =>', image);
       const response = await UploadFileOnS3(video, 'video', setProgress);
-      setPreviewVideo(response?.uploadResponse?.Location);
+      setPreview(response?.uploadResponse?.Location);
       setDeleteKey(response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
@@ -64,7 +64,7 @@ const AwsVideoUploader = () => {
       //     "key": "video/1679987013435.mp4"
       //   }
       // }
-      setPreviewVideo(response?.uploadResponse?.Location);
+      setPreview(response?.uploadResponse?.Location);
       setDeleteKey(response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
@@ -109,14 +109,14 @@ const AwsVideoUploader = () => {
             {/* image preview */}
             <View>
               {/* image preview */}
-              {previewVideo && (
+              {preview && (
                 <>
                   <VideoPlayer
                     isCancel
                     onCancelPress={() =>
-                      DeleteFileHandler(deleteKey, setPreviewVideo)
+                      DeleteFileHandler(deleteKey, setPreview)
                     }
-                    videoUrl={previewVideo}
+                    videoUrl={preview}
                   />
                 </>
               )}

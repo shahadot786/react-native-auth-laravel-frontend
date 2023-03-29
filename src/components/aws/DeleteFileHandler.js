@@ -1,12 +1,18 @@
 import {S3} from 'aws-sdk';
+import {
+  AWS_BUCKET_NAME,
+  AWS_ACCESS_KEY_ID,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_REGION,
+} from '@env';
 
-export const DeleteFileHandler = async (fileKey, setPreviewVideo) => {
+export const DeleteFileHandler = async (fileKey, setPreview) => {
   try {
-    const bucketName = 'shahadot-tfp-hellosuperstars';
+    const bucketName = AWS_BUCKET_NAME;
     const s3 = new S3({
-      accessKeyId: 'AKIAXO5VROGDSZOY5JUX',
-      secretAccessKey: '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',
-      region: 'ap-southeast-1',
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      region: AWS_REGION,
     });
 
     const deleteParams = {
@@ -17,7 +23,7 @@ export const DeleteFileHandler = async (fileKey, setPreviewVideo) => {
       if (err) console.log(err, err.stack);
       else {
         console.log(data);
-        setPreviewVideo(false);
+        setPreview(false);
       }
     });
     //console.log('delete response => ', deleteResponse);
