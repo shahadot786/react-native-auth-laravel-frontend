@@ -36,6 +36,7 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
     ACL: 'public-read',
   };
 
+  //upload files
   try {
     // Check if previous file exists and delete it
     const listParams = {
@@ -56,6 +57,7 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
           Quiet: false,
         },
       };
+      //delete previous file
       const deleteResponse = await s3.deleteObjects(deleteParams).promise();
       //console.log('Previous file(s) deleted successfully', deleteResponse);
     }
@@ -66,7 +68,7 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
       .on('httpUploadProgress', progress => {
         const uploadedBytes = progress.loaded;
         const totalBytes = progress.total;
-        const percentCompleted = Math.round((uploadedBytes / totalBytes) * 100);
+        //const percentCompleted = Math.round((uploadedBytes / totalBytes) * 100);
         //console.log(`Uploaded ${percentCompleted}%`);
         const progressData = uploadedBytes / totalBytes;
         progressCallback(progressData);

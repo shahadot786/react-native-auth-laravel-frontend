@@ -14,6 +14,7 @@ const AwsImageUploader = () => {
   const [loading, setLoading] = useState(false);
   const [deleteKey, setDeleteKey] = useState();
   const [progress, setProgress] = useState(0);
+
   const pickGalleryImage = async () => {
     try {
       setLoading(true);
