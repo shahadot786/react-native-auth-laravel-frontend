@@ -6,6 +6,7 @@ import {
   AWS_SECRET_ACCESS_KEY,
   AWS_REGION,
 } from '@env';
+import RNFetchBlob from 'rn-fetch-blob';
 
 export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
   //extract the file path and name
@@ -76,6 +77,8 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
       .promise();
     //console.log('File uploaded successfully', uploadResponse);
 
+    //clear the cache
+    RNFetchBlob.fs.unlink(filePath?.path);
     // Return the URL of the new file
     return {uploadResponse};
   } catch (error) {
