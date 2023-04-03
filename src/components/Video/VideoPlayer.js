@@ -14,6 +14,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Slider from '@react-native-community/slider';
 
 const width = Dimensions.get('screen').width;
+const height = Dimensions.get('screen').height;
 
 const VideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [isPlaying, setIsPlaying] = useState(true);
@@ -128,8 +129,8 @@ const styles = StyleSheet.create({
     marginTop: 15,
   },
   videoPlayer: {
-    width: width - 50,
-    height: 240,
+    width: width - 20,
+    height: 200,
     borderTopLeftRadius: 15,
     borderTopRightRadius: 15,
   },

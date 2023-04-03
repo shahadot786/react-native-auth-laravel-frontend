@@ -20,6 +20,11 @@ const FileUploadList = () => {
         textColor={Colors.black}>
         Video Upload
       </Button>
+      <Button
+        onPress={() => navigation.navigate(RouteName.uploadList)}
+        textColor={Colors.white}>
+        Upload List
+      </Button>
     </View>
   );
 };
