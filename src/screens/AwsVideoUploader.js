@@ -27,25 +27,23 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const hlsResponse = await HlsConverter(video);
       //console.log('Hls Response =>', hlsResponse);
-      const videoUri = `file://${hlsResponse}`;
-      setPreview(videoUri);
       // const response = await HlsVideoUploader(videoUri, 'video', setProgress);
-      // setPreview(response?.uploadResponse?.Location);
-      // setDeleteKey(response?.uploadResponse?.Key);
+      const Response = await UploadFileOnS3(video,'video',setProgress);
+      setPreview(Response?.uploadResponse?.Location);
+      setDeleteKey(Response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
     }
     //clear cache
-    ImageCropPicker.clean()
-      .then(() => {
-        console.log('removed all tmp videos from tmp directory');
-      })
-      .catch(e => {
-        alert(e);
-      });
+    // ImageCropPicker.clean()
+    //   .then(() => {
+    //     console.log('removed all tmp videos from tmp directory');
+    //   })
+    //   .catch(e => {
+    //     alert(e);
+    //   });
   };
   //pick camera for image
   const handleCameraVideo = async () => {
@@ -58,13 +56,11 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      const hlsResponse = await HlsConverter(video);
-      console.log('Hls Response =>', hlsResponse);
-      const videoUri = `file://${hlsResponse}`;
-      setPreview(videoUri);
-      const response = await HlsVideoUploader(videoUri, 'video', setProgress);
-      // setPreview(response?.uploadResponse?.Location);
-      // setDeleteKey(response?.uploadResponse?.Key);
+      //const hlsResponse = await HlsConverter(video);
+      //const response = await HlsVideoUploader(videoUri, 'video', setProgress);
+      const Response = await UploadFileOnS3(video,'video',setProgress);
+      setPreview(Response?.uploadResponse?.Location);
+      setDeleteKey(Response?.uploadResponse?.Key);
       setLoading(false);
       //console.log(response);
       //       {
@@ -80,16 +76,7 @@ const AwsVideoUploader = () => {
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
     }
-    //clear cache
-    ImageCropPicker.clean()
-      .then(() => {
-        console.log('removed all tmp videos from tmp directory');
-      })
-      .catch(e => {
-        alert(e);
-      });
   };
-  console.log('file data =>', preview);
   //set progress value
   // const uploadedBytes = progress?.loaded;
   // const totalBytes = progress?.total;
