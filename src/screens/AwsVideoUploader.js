@@ -1,15 +1,13 @@
-import {View, StyleSheet, Text} from 'react-native';
+import {View, StyleSheet, Text, ScrollView} from 'react-native';
 import React, {useState} from 'react';
 import Heading from '../components/Heading';
 import Colors from '../constants/Colors';
 import ImageCropPicker from 'react-native-image-crop-picker';
 import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
 import VideoPicker from '../components/Video/VideoPicker';
-import VideoPlayer from '../components/Video/VideoPlayer';
 import CustomProgressBar from '../components/progress/CustomProgressBar';
 import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
-import {HlsConverter} from '../components/aws/HlsConverter';
-import {HlsVideoUploader} from '../components/aws/HlsVideoUploader';
+import CustomVideoPlayer from '../components/Video/CustomVideoPlayer';
 
 const AwsVideoUploader = () => {
   const [preview, setPreview] = useState(false);
@@ -27,11 +25,10 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      //console.log('Hls Response =>', hlsResponse);
-      // const response = await HlsVideoUploader(videoUri, 'video', setProgress);
-      const Response = await UploadFileOnS3(video,'video',setProgress);
-      setPreview(Response?.uploadResponse?.Location);
-      setDeleteKey(Response?.uploadResponse?.Key);
+      setPreview(video?.path);
+      // const Response = await UploadFileOnS3(video, 'video', setProgress);
+      // setPreview(Response?.uploadResponse?.Location);
+      // setDeleteKey(Response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
@@ -56,11 +53,10 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      //const hlsResponse = await HlsConverter(video);
-      //const response = await HlsVideoUploader(videoUri, 'video', setProgress);
-      const Response = await UploadFileOnS3(video,'video',setProgress);
-      setPreview(Response?.uploadResponse?.Location);
-      setDeleteKey(Response?.uploadResponse?.Key);
+      setPreview(video?.path);
+      // const Response = await UploadFileOnS3(video, 'video', setProgress);
+      // setPreview(Response?.uploadResponse?.Location);
+      // setDeleteKey(Response?.uploadResponse?.Key);
       setLoading(false);
       //console.log(response);
       //       {
@@ -83,8 +79,8 @@ const AwsVideoUploader = () => {
   // const progressValue = uploadedBytes / totalBytes;
 
   return (
-    <>
-      {loading ? (
+    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+      {!!loading ? (
         <>
           <View style={styles.indicator}>
             <Text
@@ -100,16 +96,21 @@ const AwsVideoUploader = () => {
         </>
       ) : (
         <>
-          <View style={styles.container}>
+          <View style={styles.indicator}>
             {/* Heading */}
             <Heading color={Colors.white}>Upload Video into Amazon S3</Heading>
+            {/* video */}
+            <VideoPicker
+              handleCameraVideo={handleCameraVideo}
+              pickGalleryVideo={pickGalleryVideo}
+            />
             {/* image preview */}
             <View>
               {/* image preview */}
               {preview && (
                 <>
-                  <VideoPlayer
-                    isCancel
+                  <CustomVideoPlayer
+                    //isCancel
                     onCancelPress={() =>
                       DeleteFileHandler(deleteKey, setPreview)
                     }
@@ -117,16 +118,11 @@ const AwsVideoUploader = () => {
                   />
                 </>
               )}
-              {/* video */}
-              <VideoPicker
-                handleCameraVideo={handleCameraVideo}
-                pickGalleryVideo={pickGalleryVideo}
-              />
             </View>
           </View>
         </>
       )}
-    </>
+    </ScrollView>
   );
 };
 
@@ -137,8 +133,7 @@ const styles = StyleSheet.create({
     rowGap: 25,
     backgroundColor: Colors.black,
     paddingVertical: 15,
-    alignItems: 'center',
-    paddingTop: 40,
+    paddingTop: 15,
   },
   indicator: {
     justifyContent: 'center',
