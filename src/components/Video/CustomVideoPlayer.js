@@ -11,12 +11,13 @@ import {
 import Video from 'react-native-video';
 import Colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
 
 const width = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
-const FbVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
+const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -26,37 +27,38 @@ const FbVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [videoHeight, setVideoHeight] = useState();
   const videoPlayer = useRef(null);
 
+  //handle play pause
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
-
+  //handle video size according video orientation
   const handleLoad = ({duration, naturalSize}) => {
     //handle video size
     const {orientation} = naturalSize;
-
+    //check the orientation
     if (orientation == 'landscape') {
       setVideoHeight(screenHeight / 3.85);
     } else if (orientation == 'portrait') {
       setVideoHeight(screenHeight / 1.5);
     }
-    console.log('naturalSize =>', naturalSize);
+    //console.log('naturalSize =>', naturalSize);
     setDuration(duration);
     setIsLoading(false);
   };
-
+  //handle progress
   const handleProgress = ({currentTime}) => {
     setCurrentTime(currentTime);
   };
-
+  //handle video duration slider
   const handleSliderChange = value => {
     videoPlayer.current.seek(value);
     setCurrentTime(value);
   };
-
+  //handle mute change
   const handleVolumeChange = () => {
     setVolume(!volume);
   };
-
+  //hide video controller
   const handleHideControl = () => {
     setHideControl(!hideControl);
   };
@@ -80,7 +82,31 @@ const FbVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
           repeat
         />
       </TouchableWithoutFeedback>
-      {/* cancel button */}
+      {/* end video player */}
+      {hideControl && (
+        <>
+          {!isLoading && (
+            <TouchableWithoutFeedback onPress={handlePlayPause}>
+              <View style={styles.playPauseButton}>
+                {isPlaying ? (
+                  <Ionicons
+                    name="pause-circle-outline"
+                    size={50}
+                    color={Colors.white}
+                  />
+                ) : (
+                  <Ionicons
+                    name="play-circle-outline"
+                    size={50}
+                    color={Colors.white}
+                  />
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          )}
+        </>
+      )}
+      {/* end play pause controller */}
       {isCancel && (
         <TouchableOpacity
           onPress={onCancelPress}
@@ -89,35 +115,24 @@ const FbVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
           <Icon name="cancel" size={30} color={Colors.white} />
         </TouchableOpacity>
       )}
-
+      {/* end cancel button if isCancel active */}
       {isLoading && (
         <View style={styles.loading}>
           <ActivityIndicator size={30} color={Colors.white} />
           <Text style={{color: Colors.white, fontSize: 16}}>Loading...</Text>
         </View>
       )}
-      {/* control */}
+      {/* end loader */}
       {hideControl ? (
         <>
           {!isLoading && (
             <View style={styles.controls}>
-              <TouchableWithoutFeedback onPress={handlePlayPause}>
-                <View style={styles.playPauseButton}>
-                  {isPlaying ? (
-                    <Icon
-                      name="pause-circle-filled"
-                      size={30}
-                      color={Colors.white}
-                    />
-                  ) : (
-                    <Icon
-                      name="play-circle-fill"
-                      size={30}
-                      color={Colors.white}
-                    />
-                  )}
-                </View>
-              </TouchableWithoutFeedback>
+              <Text style={styles.time}>
+                {Math.floor(currentTime / 60)}:
+                {('0' + Math.floor(currentTime % 60)).slice(-2)} /{' '}
+                {Math.floor(duration / 60)}:
+                {('0' + Math.floor(duration % 60)).slice(-2)}
+              </Text>
               <Slider
                 style={styles.slider}
                 minimumValue={0}
@@ -128,18 +143,21 @@ const FbVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
                 maximumTrackTintColor="white"
                 thumbTintColor="white"
               />
-              <Text style={styles.time}>
-                {Math.floor(currentTime / 60)}:
-                {('0' + Math.floor(currentTime % 60)).slice(-2)} /{' '}
-                {Math.floor(duration / 60)}:
-                {('0' + Math.floor(duration % 60)).slice(-2)}
-              </Text>
+
               <TouchableWithoutFeedback onPress={handleVolumeChange}>
                 <View style={styles.volumeButton}>
                   {volume ? (
-                    <Icon name="volume-up" size={26} color={Colors.white} />
+                    <Ionicons
+                      name="volume-medium-sharp"
+                      size={26}
+                      color={Colors.white}
+                    />
                   ) : (
-                    <Icon name="volume-off" size={26} color={Colors.white} />
+                    <Ionicons
+                      name="volume-mute"
+                      size={26}
+                      color={Colors.white}
+                    />
                   )}
                 </View>
               </TouchableWithoutFeedback>
@@ -151,14 +169,19 @@ const FbVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
           <TouchableWithoutFeedback onPress={handleVolumeChange}>
             <View style={styles.volumeButtonOutside}>
               {volume ? (
-                <Icon name="volume-up" size={26} color={Colors.white} />
+                <Ionicons
+                  name="volume-medium-sharp"
+                  size={26}
+                  color={Colors.white}
+                />
               ) : (
-                <Icon name="volume-off" size={26} color={Colors.white} />
+                <Ionicons name="volume-mute" size={26} color={Colors.white} />
               )}
             </View>
           </TouchableWithoutFeedback>
         </>
       )}
+      {/* end control */}
     </View>
   );
 };
@@ -168,16 +191,10 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.black,
     justifyContent: 'center',
     alignItems: 'center',
-    // borderTopLeftRadius: 15,
-    // borderTopRightRadius: 15,
-    //borderRadius: 10,
     marginTop: 15,
   },
   videoPlayer: {
     width: width,
-    // borderTopLeftRadius: 10,
-    // borderTopRightRadius: 10,
-    //borderRadius: 10,
   },
   controls: {
     position: 'absolute',
@@ -188,20 +205,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingHorizontal: 5,
   },
   time: {
     color: Colors.white,
   },
   playPauseButton: {
-    width: 30,
-    height: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.white,
-    borderRadius: 15,
+    width: 50,
+    height: 50,
+    position: 'absolute',
   },
   loading: {
     position: 'absolute',
@@ -234,10 +246,10 @@ const styles = StyleSheet.create({
   volumeButtonOutside: {
     width: 26,
     height: 26,
-    right: 10,
+    right: 5,
     position: 'absolute',
-    bottom: 7,
+    bottom: 0,
   },
 });
 
-export default FbVideoPlayer;
+export default CustomVideoPlayer;

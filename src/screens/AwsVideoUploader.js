@@ -7,7 +7,7 @@ import {UploadFileOnS3} from '../components/aws/UploadFileOnS3';
 import VideoPicker from '../components/Video/VideoPicker';
 import CustomProgressBar from '../components/progress/CustomProgressBar';
 import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
-import FbVideoPlayer from '../components/Video/FbVideoPlayer';
+import CustomVideoPlayer from '../components/Video/CustomVideoPlayer';
 
 const AwsVideoUploader = () => {
   const [preview, setPreview] = useState(false);
@@ -25,10 +25,10 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      //setPreview(video?.path);
-      const Response = await UploadFileOnS3(video, 'video', setProgress);
-      setPreview(Response?.uploadResponse?.Location);
-      setDeleteKey(Response?.uploadResponse?.Key);
+      setPreview(video?.path);
+      // const Response = await UploadFileOnS3(video, 'video', setProgress);
+      // setPreview(Response?.uploadResponse?.Location);
+      // setDeleteKey(Response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
@@ -109,7 +109,7 @@ const AwsVideoUploader = () => {
               {/* image preview */}
               {preview && (
                 <>
-                  <FbVideoPlayer
+                  <CustomVideoPlayer
                     //isCancel
                     onCancelPress={() =>
                       DeleteFileHandler(deleteKey, setPreview)
