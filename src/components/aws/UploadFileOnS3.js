@@ -40,28 +40,29 @@ export const UploadFileOnS3 = async (filePath, fileType, progressCallback) => {
   //upload files
   try {
     // Check if previous file exists and delete it
-    const listParams = {
-      Bucket: bucketName,
-      Prefix: `${fileType}/`,
-    };
-    const fileList = await s3.listObjects(listParams).promise();
-    const deleteKeys = fileList.Contents.filter(
-      file =>
-        file.Key.includes(`${fileType}/`) &&
-        file.Key !== `${fileType}/${fileKey}`,
-    ).map(file => ({Key: file.Key}));
-    if (deleteKeys.length > 0) {
-      const deleteParams = {
-        Bucket: bucketName,
-        Delete: {
-          Objects: deleteKeys,
-          Quiet: false,
-        },
-      };
-      //delete previous file
-      const deleteResponse = await s3.deleteObjects(deleteParams).promise();
-      //console.log('Previous file(s) deleted successfully', deleteResponse);
-    }
+    // const listParams = {
+    //   Bucket: bucketName,
+    //   Prefix: `${fileType}/`,
+    // };
+    // const fileList = await s3.listObjects(listParams).promise();
+    // const deleteKeys = fileList.Contents.filter(
+    //   file =>
+    //     file.Key.includes(`${fileType}/`) &&
+    //     file.Key !== `${fileType}/${fileKey}`,
+    // ).map(file => ({Key: file.Key}));
+    // if (deleteKeys.length > 0) {
+    //   const deleteParams = {
+    //     Bucket: bucketName,
+    //     Delete: {
+    //       Objects: deleteKeys,
+    //       Quiet: false,
+    //     },
+    //   };
+    //   //console.log('fileList =>', fileList);
+    //   //delete previous file
+    //   //const deleteResponse = await s3.deleteObjects(deleteParams).promise();
+    //   //console.log('Previous file(s) deleted successfully', deleteResponse);
+    // }
 
     // Upload the new file with progress
     const uploadResponse = await s3
