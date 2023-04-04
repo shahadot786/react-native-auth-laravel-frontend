@@ -22,7 +22,8 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
-  const [volume, setVolume] = useState(false);
+  const [volume, setVolume] = useState(1);
+  const [isMuted, setIsMuted] = useState(volume === 0);
   const [hideControl, setHideControl] = useState(false);
   const [videoHeight, setVideoHeight] = useState();
   const videoPlayer = useRef(null);
@@ -39,7 +40,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
     if (orientation == 'landscape') {
       setVideoHeight(screenHeight / 3.85);
     } else if (orientation == 'portrait') {
-      setVideoHeight(screenHeight / 1.5);
+      setVideoHeight(screenHeight / 2);
     }
     //console.log('naturalSize =>', naturalSize);
     setDuration(duration);
@@ -54,15 +55,29 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
     videoPlayer.current.seek(value);
     setCurrentTime(value);
   };
-  //handle mute change
-  const handleVolumeChange = () => {
-    setVolume(!volume);
-  };
   //hide video controller
   const handleHideControl = () => {
     setHideControl(!hideControl);
   };
-
+  //handle volume
+  const handleVolumeChange = value => {
+    if (value === 0) {
+      setIsMuted(false);
+      //setVolume(value);
+    } else {
+      setIsMuted(true);
+    }
+  };
+  //handle mute
+  const handleMutePress = () => {
+    if (isMuted) {
+      setIsMuted(false);
+    } else {
+      setIsMuted(true);
+    }
+  };
+  //console.log('video height =>', videoHeight);
+  //console.log('Volume', volume);
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={handleHideControl}>
@@ -73,13 +88,14 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
             styles.videoPlayer,
             {height: videoHeight ? videoHeight : 250},
           ]}
-          resizeMode={'stretch'}
+          resizeMode={'contain'}
           onLoad={handleLoad}
           onProgress={handleProgress}
           paused={!isPlaying}
-          muted={!volume}
-          //onError={error => console.error(error)}
+          muted={!isMuted}
+          onError={error => console.error(error)}
           repeat
+          volume={volume}
         />
       </TouchableWithoutFeedback>
       {/* end video player */}
@@ -144,9 +160,9 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
                 thumbTintColor="white"
               />
 
-              <TouchableWithoutFeedback onPress={handleVolumeChange}>
+              <TouchableWithoutFeedback onPress={handleMutePress}>
                 <View style={styles.volumeButton}>
-                  {volume ? (
+                  {isMuted ? (
                     <Ionicons
                       name="volume-medium-sharp"
                       size={26}
@@ -166,9 +182,9 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
         </>
       ) : (
         <>
-          <TouchableWithoutFeedback onPress={handleVolumeChange}>
+          <TouchableWithoutFeedback onPress={handleMutePress}>
             <View style={styles.volumeButtonOutside}>
-              {volume ? (
+              {isMuted ? (
                 <Ionicons
                   name="volume-medium-sharp"
                   size={26}
@@ -179,6 +195,19 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
               )}
             </View>
           </TouchableWithoutFeedback>
+          {isMuted && (
+            <Slider
+              style={styles.volumeSlider}
+              minimumValue={0}
+              maximumValue={volume}
+              minimumTrackTintColor="#FFFFFF"
+              maximumTrackTintColor="#000000"
+              thumbTintColor="#FFFFFF"
+              value={volume}
+              onValueChange={handleVolumeChange}
+              vertical
+            />
+          )}
         </>
       )}
       {/* end control */}
@@ -195,6 +224,7 @@ const styles = StyleSheet.create({
   },
   videoPlayer: {
     width: width,
+    backgroundColor: '#1b1b1b49',
   },
   controls: {
     position: 'absolute',
@@ -249,6 +279,14 @@ const styles = StyleSheet.create({
     right: 5,
     position: 'absolute',
     bottom: 0,
+  },
+  volumeSlider: {
+    height: 50,
+    width: 100,
+    transform: [{rotate: '-90deg'}],
+    right: -30,
+    position: 'absolute',
+    bottom: 40,
   },
 });
 
