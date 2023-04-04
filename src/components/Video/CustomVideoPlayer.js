@@ -97,6 +97,21 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
           repeat
           volume={volume}
         />
+        {/* <Video
+        source={{uri: `${BASE_URL}${item?.Key}`}}
+        resizeMode={'contain'}
+        style={[
+            styles.videoPlayer,
+            {height: videoHeight ? videoHeight : 250},
+          ]}
+        ref={ref => (videoPlayers.current[item?.Key] = ref)}
+        onLoad={() => handleLoad(item?.Key)}
+        onEnd={() => handleEnd(item?.Key)}
+        onError={error => console.log(error)}
+        paused={!playbackState[item?.Key]}
+        repeat={false}
+      />
+    </View> */}
       </TouchableWithoutFeedback>
       {/* end video player */}
       {hideControl && (
