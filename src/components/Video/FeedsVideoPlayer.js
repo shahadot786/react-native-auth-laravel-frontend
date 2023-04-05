@@ -10,14 +10,13 @@ import {
 } from 'react-native';
 import Video from 'react-native-video';
 import Colors from '../../constants/Colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
 
 const width = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
-const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
+const FeedsVideoPlayer = ({videoUrl}) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -26,7 +25,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [isMuted, setIsMuted] = useState(volume === 0);
   const [hideControl, setHideControl] = useState(false);
   const [videoHeight, setVideoHeight] = useState();
-  const videoPlayer = useRef(null);
+  const videoPlayers = useRef({});
 
   //handle play pause
   const handlePlayPause = () => {
@@ -42,7 +41,6 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
     } else if (orientation == 'portrait') {
       setVideoHeight(screenHeight / 2);
     }
-    //console.log('naturalSize =>', naturalSize);
     setDuration(duration);
     setIsLoading(false);
   };
@@ -52,7 +50,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   };
   //handle video duration slider
   const handleSliderChange = value => {
-    videoPlayer.current.seek(value);
+    videoPlayers.current.seek(value);
     setCurrentTime(value);
   };
   //hide video controller
@@ -63,10 +61,8 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const handleVolumeChange = value => {
     if (value === 0) {
       setIsMuted(false);
-      //setVolume(1);
     } else {
       setIsMuted(true);
-      //setVolume(0);
     }
   };
   //handle mute
@@ -79,25 +75,23 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
       setVolume(1);
     }
   };
-  //console.log('video height =>', videoHeight);
-  //console.log('Volume', volume);
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={handleHideControl}>
         <Video
           source={{uri: videoUrl}}
-          ref={videoPlayer}
+          resizeMode={'contain'}
           style={[
             styles.videoPlayer,
             {height: videoHeight ? videoHeight : 250},
           ]}
-          resizeMode={'contain'}
+          ref={videoPlayers}
           onLoad={handleLoad}
-          onProgress={handleProgress}
+          onError={error => console.log(error)}
           paused={!isPlaying}
+          repeat={false}
+          onProgress={handleProgress}
           muted={!isMuted}
-          onError={error => console.error(error)}
-          //repeat
           volume={volume}
         />
       </TouchableWithoutFeedback>
@@ -126,15 +120,6 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
         </>
       )}
       {/* end play pause controller */}
-      {isCancel && (
-        <TouchableOpacity
-          onPress={onCancelPress}
-          style={styles.cancelBtn}
-          activeOpacity={0.6}>
-          <Icon name="cancel" size={30} color={Colors.white} />
-        </TouchableOpacity>
-      )}
-      {/* end cancel button if isCancel active */}
       {isLoading && (
         <View style={styles.loading}>
           <ActivityIndicator size={30} color={Colors.white} />
@@ -303,7 +288,8 @@ const styles = StyleSheet.create({
     right: -30,
     position: 'absolute',
     bottom: 40,
+    zIndex: 111111111,
   },
 });
 
-export default CustomVideoPlayer;
+export default FeedsVideoPlayer;

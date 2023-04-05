@@ -1,4 +1,4 @@
-import {StyleSheet, View, FlatList, Text} from 'react-native';
+import {StyleSheet, View, ScrollView, Text} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import Colors from '../constants/Colors';
 import {S3} from 'aws-sdk';
@@ -8,15 +8,12 @@ import {
   AWS_SECRET_ACCESS_KEY,
   AWS_REGION,
 } from '@env';
-import Video from 'react-native-video';
+import CustomVideoPlayer from '../components/Video/CustomVideoPlayer';
 
 const VideoUploadList = () => {
   const [videoData, setVideoData] = useState([]);
-  const [selectedVideo, setSelectedVideo] = useState(null);
-  const [playbackState, setPlaybackState] = useState({}); // state to keep track of playback states for each video
-  const videoPlayers = useRef({}); // reference to all video players
-  const flatlistRef = useRef(null); // reference to flatlist
-
+  const [loadedCount, setLoadedCount] = useState(2); // Change initial loadedCount to 2
+  const scrollViewRef = useRef(null);
   // aws s3 configuration
   const bucketName = AWS_BUCKET_NAME;
   const fileType = 'video';
@@ -29,15 +26,6 @@ const VideoUploadList = () => {
     region: AWS_REGION,
   });
 
-  // function to stop playback for all videos except the selected one
-  const stopAllPlayback = () => {
-    Object.keys(playbackState).forEach(key => {
-      if (key !== selectedVideo) {
-        setPlaybackState(prevState => ({...prevState, [key]: false}));
-      }
-    });
-  };
-
   const getItemList = async () => {
     try {
       const listParams = {
@@ -46,7 +34,7 @@ const VideoUploadList = () => {
       };
       const fileList = await s3.listObjects(listParams).promise();
       const list = fileList?.Contents;
-      setVideoData(list);
+      setVideoData(list); // Set all video data initially
     } catch (error) {
       console.log(error);
     }
@@ -56,62 +44,44 @@ const VideoUploadList = () => {
     getItemList();
   }, []);
 
-  const handleLoad = videoId => {
-    setPlaybackState(prevState => ({...prevState, [videoId]: true}));
+  const loadMoreItems = () => {
+    // Load more items when end of list is reached
+    setLoadedCount(prevCount => prevCount + 2);
   };
 
-  const handleEnd = videoId => {
-    setPlaybackState(prevState => ({...prevState, [videoId]: false}));
-    const nextIndex = videoData.findIndex(item => item?.Key === videoId) + 1;
-    if (nextIndex < videoData.length) {
-      setSelectedVideo(videoData[nextIndex]?.Key);
-      flatlistRef.current.scrollToIndex({
-        index: nextIndex,
-        animated: true,
-      });
-    } else {
-      setSelectedVideo(null);
-    }
+  const renderVideoItems = () => {
+    // Render video items based on loadedCount
+    const itemsToRender = videoData.slice(0, loadedCount);
+    return itemsToRender.map(item => (
+      <View style={styles.videoContainer} key={item?.Key}>
+        <Text style={styles.videoTitle}>{item?.Key}</Text>
+        <CustomVideoPlayer videoUrl={`${BASE_URL}${item?.Key}`} />
+      </View>
+    ));
   };
-
-  const renderItem = ({item, index}) => (
-    <View style={styles.videoContainer}>
-      <Text style={styles.videoTitle}>{item?.Key}</Text>
-      {/* <CustomVideoPlayer videoUrl={`${BASE_URL}${item?.Key}`} /> */}
-      <Video
-        source={{uri: `${BASE_URL}${item?.Key}`}}
-        resizeMode={'contain'}
-        style={styles.videoPlayer}
-        ref={ref => (videoPlayers.current[item?.Key] = ref)}
-        onLoad={() => handleLoad(item?.Key)}
-        onEnd={() => handleEnd(item?.Key)}
-        onError={error => console.log(error)}
-        paused={!playbackState[item?.Key]}
-        repeat={false}
-      />
-    </View>
-  );
-
-  const handleViewableItemsChanged = useRef(({viewableItems}) => {
-    const firstVisibleItem = viewableItems?.[0];
-    if (firstVisibleItem?.index >= 0) {
-      stopAllPlayback();
-      setSelectedVideo(firstVisibleItem?.item?.Key);
-    }
-  }).current;
 
   return (
     <View style={styles.container}>
-      <FlatList
+      <ScrollView
         showsVerticalScrollIndicator={false}
-        data={videoData}
-        renderItem={renderItem}
-        keyExtractor={item => item?.Key}
-        horizontal={false} // change to false for vertical scroll
-        ref={flatlistRef}
-        //onScroll={stopAllPlayback}
-        onViewableItemsChanged={handleViewableItemsChanged}
-      />
+        ref={scrollViewRef}
+        onScroll={({nativeEvent}) => {
+          // Load more items when 80% of scroll is reached
+          const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
+          const paddingToBottom = 0.8 * contentSize.height;
+          if (
+            layoutMeasurement.height + contentOffset.y >= paddingToBottom &&
+            loadedCount < videoData.length
+          ) {
+            loadMoreItems();
+          }
+        }}
+        scrollEventThrottle={400}>
+        {renderVideoItems()}
+        {loadedCount < videoData.length && (
+          <Text style={styles.loadMoreText}>Loading more...</Text>
+        )}
+      </ScrollView>
     </View>
   );
 };
@@ -130,9 +100,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 10,
   },
-  videoPlayer: {
-    width: '90%',
-    height: 350,
+  loadMoreText: {
+    textAlign: 'center',
+    marginVertical: 10,
   },
 });
 
