@@ -102,8 +102,8 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
           onError={error => console.error(error)}
           //repeat
           //volume={volume}
-          poster={'https://images.shrcreation.com/Others/poster.jpg'}
-          posterResizeMode={'contain'}
+          // poster={'https://images.shrcreation.com/Others/poster.jpg'}
+          // posterResizeMode={'contain'}
         />
       </TouchableWithoutFeedback>
       {/* end video player */}

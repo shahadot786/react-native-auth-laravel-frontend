@@ -1,4 +1,10 @@
-import {StyleSheet, View, ScrollView, Text} from 'react-native';
+import {
+  StyleSheet,
+  View,
+  ScrollView,
+  Text,
+  ActivityIndicator,
+} from 'react-native';
 import React, {useEffect, useRef, useState} from 'react';
 import Colors from '../constants/Colors';
 import {S3} from 'aws-sdk';
@@ -79,7 +85,10 @@ const VideoUploadList = () => {
         scrollEventThrottle={400}>
         {renderVideoItems()}
         {loadedCount < videoData.length && (
-          <Text style={styles.loadMoreText}>Loading more...</Text>
+          <>
+            <ActivityIndicator size={24} color={Colors.primary} />
+            <Text style={styles.loadMoreText}>Loading More..</Text>
+          </>
         )}
       </ScrollView>
     </View>
