@@ -22,7 +22,7 @@ const AwsVideoUploader = () => {
       const video = await ImageCropPicker.openPicker({
         mediaType: 'video',
         compressVideoPreset: 'LowQuality',
-        includeBase64: true,
+        includeBase64: false,
       });
       //console.log('image =>', image);
       //setPreview(video?.path);

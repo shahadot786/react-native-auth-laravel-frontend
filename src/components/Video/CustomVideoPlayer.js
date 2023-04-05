@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Dimensions,
   TouchableWithoutFeedback,
-  ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
 import Video from 'react-native-video';
@@ -13,6 +12,8 @@ import Colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
+import Images from '../../constants/Images';
+import FastImage from 'react-native-fast-image';
 
 const width = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -28,10 +29,6 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [videoHeight, setVideoHeight] = useState();
   const videoPlayer = useRef(null);
 
-  //handle play pause
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
-  };
   //handle video size according video orientation
   const handleLoad = ({duration, naturalSize}) => {
     //handle video size
@@ -42,13 +39,21 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
     } else if (orientation == 'portrait') {
       setVideoHeight(screenHeight / 2);
     }
-    //console.log('naturalSize =>', naturalSize);
     setDuration(duration);
     setIsLoading(false);
   };
   //handle progress
   const handleProgress = ({currentTime}) => {
     setCurrentTime(currentTime);
+  };
+  //handle play pause
+  const handlePlayPause = () => {
+    // if (isPlaying) {
+    //   setIsPlaying(!isPlaying);
+    // } else {
+    //   setIsPlaying(isPlaying);
+    // }
+    setIsPlaying(!isPlaying);
   };
   //handle video duration slider
   const handleSliderChange = value => {
@@ -60,27 +65,25 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
     setHideControl(!hideControl);
   };
   //handle volume
-  const handleVolumeChange = value => {
-    if (value === 0) {
-      setIsMuted(false);
-      //setVolume(1);
-    } else {
-      setIsMuted(true);
-      //setVolume(0);
-    }
-  };
+  // const handleVolumeChange = value => {
+  //   if (value === 0) {
+  //     setIsMuted(false);
+  //     //setVolume(1);
+  //   } else {
+  //     setIsMuted(true);
+  //     //setVolume(0);
+  //   }
+  // };
   //handle mute
   const handleMutePress = () => {
     if (isMuted) {
       setIsMuted(false);
-      setVolume(0);
+      //setVolume(0);
     } else {
       setIsMuted(true);
-      setVolume(1);
+      //setVolume(1);
     }
   };
-  //console.log('video height =>', videoHeight);
-  //console.log('Volume', volume);
   return (
     <View style={styles.container}>
       <TouchableWithoutFeedback onPress={handleHideControl}>
@@ -98,7 +101,9 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
           muted={!isMuted}
           onError={error => console.error(error)}
           //repeat
-          volume={volume}
+          //volume={volume}
+          poster={'https://images.shrcreation.com/Others/poster.jpg'}
+          posterResizeMode={'contain'}
         />
       </TouchableWithoutFeedback>
       {/* end video player */}
@@ -137,8 +142,11 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
       {/* end cancel button if isCancel active */}
       {isLoading && (
         <View style={styles.loading}>
-          <ActivityIndicator size={30} color={Colors.white} />
-          <Text style={{color: Colors.white, fontSize: 16}}>Loading...</Text>
+          <FastImage
+            source={Images.loadingGif}
+            style={{width: 50, height: 50}}
+            resizeMode={FastImage.resizeMode.contain}
+          />
         </View>
       )}
       {/* end loader */}
@@ -180,7 +188,8 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
                   )}
                 </View>
               </TouchableWithoutFeedback>
-              {isMuted && (
+              {/* volume */}
+              {/* {isMuted && (
                 <Slider
                   style={styles.volumeSlider}
                   minimumValue={0}
@@ -192,7 +201,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
                   onValueChange={handleVolumeChange}
                   vertical
                 />
-              )}
+              )} */}
             </View>
           )}
         </>
@@ -211,7 +220,8 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
               )}
             </View>
           </TouchableWithoutFeedback>
-          {isMuted && (
+          {/* volume */}
+          {/* {isMuted && (
             <Slider
               style={styles.volumeSlider}
               minimumValue={0}
@@ -223,7 +233,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
               onValueChange={handleVolumeChange}
               vertical
             />
-          )}
+          )} */}
         </>
       )}
       {/* end control */}

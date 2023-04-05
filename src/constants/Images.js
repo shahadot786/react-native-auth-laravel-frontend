@@ -15,4 +15,5 @@ export default Images = {
   setting: require('../../assets/images/settings.png'),
   notification: require('../../assets/images/notification.png'),
   placeholderImg: require('../../assets/images/placeholder-image.png'),
+  loadingGif: require('../../assets/images/hss_loader.gif'),
 };

@@ -6598,6 +6598,11 @@
   dependencies:
     "dotenv" "^16.0.3"
 
+"react-native-fast-image@^8.6.3":
+  "integrity" "sha512-Sdw4ESidXCXOmQ9EcYguNY2swyoWmx53kym2zRsvi+VeFCHEdkO+WG1DK+6W81juot40bbfLNhkc63QnWtesNg=="
+  "resolved" "https://registry.npmjs.org/react-native-fast-image/-/react-native-fast-image-8.6.3.tgz"
+  "version" "8.6.3"
+
 "react-native-fs@^2.20.0":
   "integrity" "sha512-VkTBzs7fIDUiy/XajOSNk0XazFE9l+QlMAce7lGuebZcag5CnjszB+u4BdqzwaQOdcYb5wsJIsqq4kxInIRpJQ=="
   "resolved" "https://registry.npmjs.org/react-native-fs/-/react-native-fs-2.20.0.tgz"
@@ -6717,7 +6722,7 @@
     "prop-types" "^15.6.0"
     "react-timer-mixin" "^0.13.4"
 
-"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.71 || 1000.0.0", "react-native@>= 0.62", "react-native@>= 0.64.3", "react-native@>=0.40.0", "react-native@>=0.46.0", "react-native@>=0.57", "react-native@0.71.3":
+"react-native@*", "react-native@^0.0.0-0 || 0.60 - 0.71 || 1000.0.0", "react-native@>= 0.62", "react-native@>= 0.64.3", "react-native@>=0.40.0", "react-native@>=0.46.0", "react-native@>=0.57", "react-native@>=0.60.0", "react-native@0.71.3":
   "integrity" "sha512-RYJXCcQGa4NTfKiPgl92eRDUuQ6JGDnHqFEzRwJSqEx9lWvlvRRIebstJfurzPDKLQWQrvITR7aI7e09E25mLw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.71.3.tgz"
   "version" "0.71.3"
@@ -6784,7 +6789,7 @@
   "resolved" "https://registry.npmjs.org/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz"
   "version" "0.13.4"
 
-"react@*", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.13.1", "react@^16.14.0", "react@^16.3.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^18.2.0", "react@>= 17.0.1", "react@>=16.0", "react@>=16.5.1", "react@>=16.8", "react@>=17.0.0", "react@16.x.x", "react@18.2.0":
+"react@*", "react@^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.13.1", "react@^16.14.0", "react@^16.3.0", "react@^16.8.0 || ^17 || ^18", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^17 || ^18", "react@^18.2.0", "react@>= 17.0.1", "react@>=16.0", "react@>=16.5.1", "react@>=16.8", "react@>=17.0.0", "react@16.x.x", "react@18.2.0":
   "integrity" "sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.2.0.tgz"
   "version" "18.2.0"

@@ -12,7 +12,7 @@ import CustomVideoPlayer from '../components/Video/CustomVideoPlayer';
 
 const VideoUploadList = () => {
   const [videoData, setVideoData] = useState([]);
-  const [loadedCount, setLoadedCount] = useState(2); // Change initial loadedCount to 2
+  const [loadedCount, setLoadedCount] = useState(2); // Change initial loadedCount to 3
   const scrollViewRef = useRef(null);
   // aws s3 configuration
   const bucketName = AWS_BUCKET_NAME;
@@ -46,7 +46,7 @@ const VideoUploadList = () => {
 
   const loadMoreItems = () => {
     // Load more items when end of list is reached
-    setLoadedCount(prevCount => prevCount + 2);
+    setLoadedCount(prevCount => prevCount + 1);
   };
 
   const renderVideoItems = () => {
@@ -54,7 +54,7 @@ const VideoUploadList = () => {
     const itemsToRender = videoData.slice(0, loadedCount);
     return itemsToRender.map(item => (
       <View style={styles.videoContainer} key={item?.Key}>
-        <Text style={styles.videoTitle}>{item?.Key}</Text>
+        {/* <Text style={styles.videoTitle}>{item?.Key}</Text> */}
         <CustomVideoPlayer videoUrl={`${BASE_URL}${item?.Key}`} />
       </View>
     ));
@@ -68,7 +68,7 @@ const VideoUploadList = () => {
         onScroll={({nativeEvent}) => {
           // Load more items when 80% of scroll is reached
           const {layoutMeasurement, contentOffset, contentSize} = nativeEvent;
-          const paddingToBottom = 0.8 * contentSize.height;
+          const paddingToBottom = 0.6 * contentSize.height;
           if (
             layoutMeasurement.height + contentOffset.y >= paddingToBottom &&
             loadedCount < videoData.length
@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
   loadMoreText: {
     textAlign: 'center',
     marginVertical: 10,
+    color: Colors.white,
   },
 });
 
