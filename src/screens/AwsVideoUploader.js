@@ -22,13 +22,13 @@ const AwsVideoUploader = () => {
       const video = await ImageCropPicker.openPicker({
         mediaType: 'video',
         compressVideoPreset: 'LowQuality',
-        includeBase64: true,
+        includeBase64: false,
       });
       //console.log('image =>', image);
-      setPreview(video?.path);
-      // const Response = await UploadFileOnS3(video, 'video', setProgress);
-      // setPreview(Response?.uploadResponse?.Location);
-      // setDeleteKey(Response?.uploadResponse?.Key);
+      //setPreview(video?.path);
+      const Response = await UploadFileOnS3(video, 'video', setProgress);
+      setPreview(Response?.uploadResponse?.Location);
+      setDeleteKey(Response?.uploadResponse?.Key);
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
@@ -53,10 +53,10 @@ const AwsVideoUploader = () => {
         includeBase64: true,
       });
       //console.log('image =>', image);
-      setPreview(video?.path);
-      // const Response = await UploadFileOnS3(video, 'video', setProgress);
-      // setPreview(Response?.uploadResponse?.Location);
-      // setDeleteKey(Response?.uploadResponse?.Key);
+      //setPreview(video?.path);
+      const Response = await UploadFileOnS3(video, 'video', setProgress);
+      setPreview(Response?.uploadResponse?.Location);
+      setDeleteKey(Response?.uploadResponse?.Key);
       setLoading(false);
       //console.log(response);
       //       {

@@ -5,20 +5,18 @@ import {
   StyleSheet,
   Dimensions,
   TouchableWithoutFeedback,
+  ActivityIndicator,
   TouchableOpacity,
 } from 'react-native';
 import Video from 'react-native-video';
 import Colors from '../../constants/Colors';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
-import Images from '../../constants/Images';
-import FastImage from 'react-native-fast-image';
 
 const width = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
 
-const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
+const FeedsVideoPlayer = ({videoUrl}) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
@@ -27,8 +25,12 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const [isMuted, setIsMuted] = useState(volume === 0);
   const [hideControl, setHideControl] = useState(false);
   const [videoHeight, setVideoHeight] = useState();
-  const videoPlayer = useRef(null);
+  const videoPlayers = useRef({});
 
+  //handle play pause
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
   //handle video size according video orientation
   const handleLoad = ({duration, naturalSize}) => {
     //handle video size
@@ -46,18 +48,9 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
   const handleProgress = ({currentTime}) => {
     setCurrentTime(currentTime);
   };
-  //handle play pause
-  const handlePlayPause = () => {
-    // if (isPlaying) {
-    //   setIsPlaying(!isPlaying);
-    // } else {
-    //   setIsPlaying(isPlaying);
-    // }
-    setIsPlaying(!isPlaying);
-  };
   //handle video duration slider
   const handleSliderChange = value => {
-    videoPlayer.current.seek(value);
+    videoPlayers.current.seek(value);
     setCurrentTime(value);
   };
   //hide video controller
@@ -65,23 +58,21 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
     setHideControl(!hideControl);
   };
   //handle volume
-  // const handleVolumeChange = value => {
-  //   if (value === 0) {
-  //     setIsMuted(false);
-  //     //setVolume(1);
-  //   } else {
-  //     setIsMuted(true);
-  //     //setVolume(0);
-  //   }
-  // };
+  const handleVolumeChange = value => {
+    if (value === 0) {
+      setIsMuted(false);
+    } else {
+      setIsMuted(true);
+    }
+  };
   //handle mute
   const handleMutePress = () => {
     if (isMuted) {
       setIsMuted(false);
-      //setVolume(0);
+      setVolume(0);
     } else {
       setIsMuted(true);
-      //setVolume(1);
+      setVolume(1);
     }
   };
   return (
@@ -89,21 +80,19 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
       <TouchableWithoutFeedback onPress={handleHideControl}>
         <Video
           source={{uri: videoUrl}}
-          ref={videoPlayer}
+          resizeMode={'contain'}
           style={[
             styles.videoPlayer,
             {height: videoHeight ? videoHeight : 250},
           ]}
-          resizeMode={'contain'}
+          ref={videoPlayers}
           onLoad={handleLoad}
-          onProgress={handleProgress}
+          onError={error => console.log(error)}
           paused={!isPlaying}
+          repeat={false}
+          onProgress={handleProgress}
           muted={!isMuted}
-          onError={error => console.error(error)}
-          //repeat
-          //volume={volume}
-          poster={'https://images.shrcreation.com/Others/poster.jpg'}
-          posterResizeMode={'contain'}
+          volume={volume}
         />
       </TouchableWithoutFeedback>
       {/* end video player */}
@@ -131,22 +120,10 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
         </>
       )}
       {/* end play pause controller */}
-      {isCancel && (
-        <TouchableOpacity
-          onPress={onCancelPress}
-          style={styles.cancelBtn}
-          activeOpacity={0.6}>
-          <Icon name="cancel" size={30} color={Colors.white} />
-        </TouchableOpacity>
-      )}
-      {/* end cancel button if isCancel active */}
       {isLoading && (
         <View style={styles.loading}>
-          <FastImage
-            source={Images.loadingGif}
-            style={{width: 50, height: 50}}
-            resizeMode={FastImage.resizeMode.contain}
-          />
+          <ActivityIndicator size={30} color={Colors.white} />
+          <Text style={{color: Colors.white, fontSize: 16}}>Loading...</Text>
         </View>
       )}
       {/* end loader */}
@@ -188,8 +165,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
                   )}
                 </View>
               </TouchableWithoutFeedback>
-              {/* volume */}
-              {/* {isMuted && (
+              {isMuted && (
                 <Slider
                   style={styles.volumeSlider}
                   minimumValue={0}
@@ -201,7 +177,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
                   onValueChange={handleVolumeChange}
                   vertical
                 />
-              )} */}
+              )}
             </View>
           )}
         </>
@@ -220,8 +196,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
               )}
             </View>
           </TouchableWithoutFeedback>
-          {/* volume */}
-          {/* {isMuted && (
+          {isMuted && (
             <Slider
               style={styles.volumeSlider}
               minimumValue={0}
@@ -233,7 +208,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
               onValueChange={handleVolumeChange}
               vertical
             />
-          )} */}
+          )}
         </>
       )}
       {/* end control */}
@@ -313,7 +288,8 @@ const styles = StyleSheet.create({
     right: -30,
     position: 'absolute',
     bottom: 40,
+    zIndex: 111111111,
   },
 });
 
-export default CustomVideoPlayer;
+export default FeedsVideoPlayer;
