@@ -17,6 +17,7 @@ import AwsImageUploader from '../screens/AwsImageUploader';
 import FileUploadList from '../screens/FileUploadList';
 import AwsVideoUploader from '../screens/AwsVideoUploader';
 import VideoUploadList from '../screens/VideoUploadList';
+import BackgroundFileUploader from '../components/aws/BackgroundFileUploader';
 
 const Stack = createNativeStackNavigator();
 
@@ -103,6 +104,11 @@ const NavigationHome = () => {
               <Stack.Screen
                 name={RouteName.uploadList}
                 component={VideoUploadList}
+                options={{headerShown: false}}
+              />
+              <Stack.Screen
+                name={RouteName.backgroundUpload}
+                component={BackgroundFileUploader}
                 options={{headerShown: false}}
               />
               <Stack.Screen

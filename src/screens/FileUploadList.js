@@ -25,6 +25,12 @@ const FileUploadList = () => {
         textColor={Colors.white}>
         Upload List
       </Button>
+      <Button
+        onPress={() => navigation.navigate(RouteName.backgroundUpload)}
+        backgroundColor={Colors.primary}
+        textColor={Colors.black}>
+        Background Upload
+      </Button>
     </View>
   );
 };

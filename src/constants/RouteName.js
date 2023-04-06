@@ -16,4 +16,5 @@ export default RouteName = {
   fileList: 'FileList',
   videoUpload: 'VideoUpload',
   uploadList: 'uploadList',
+  backgroundUpload: 'BackgroundUpload',
 };

@@ -8,6 +8,7 @@ import VideoPicker from '../components/Video/VideoPicker';
 import CustomProgressBar from '../components/progress/CustomProgressBar';
 import {DeleteFileHandler} from '../components/aws/DeleteFileHandler';
 import CustomVideoPlayer from '../components/Video/CustomVideoPlayer';
+import {UploadVideoInBackground} from '../components/aws/BackgroundFileUploader';
 
 const AwsVideoUploader = () => {
   const [preview, setPreview] = useState(false);
@@ -26,9 +27,19 @@ const AwsVideoUploader = () => {
       });
       //console.log('image =>', image);
       //setPreview(video?.path);
-      const Response = await UploadFileOnS3(video, 'video', setProgress);
-      setPreview(Response?.uploadResponse?.Location);
-      setDeleteKey(Response?.uploadResponse?.Key);
+      // const Response = await UploadFileOnS3(video, 'video', setProgress);
+      // setPreview(Response?.uploadResponse?.Location);
+      // setDeleteKey(Response?.uploadResponse?.Key);
+
+      // const Response = await UploadVideoInBackground(video)
+      //   .then(uploadId => {
+      //     console.log('Video upload started!', uploadId);
+      //   })
+      //   .catch(err => {
+      //     console.log('Error uploading video:', err.message);
+      //   });
+      // console.log('Response =>', Response);
+
       setLoading(false);
     } catch (error) {
       console.log('Pick gallery Video Error => ', error);
