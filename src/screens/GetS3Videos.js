@@ -11,7 +11,7 @@ import {
 import CustomVideoPlayer from '../components/Video/CustomVideoPlayer';
 import DotLoader from '../components/loader/DotLoader';
 
-const VideoUploadList = () => {
+const GetS3Videos = () => {
   const [videoData, setVideoData] = useState([]);
   const [loadedCount, setLoadedCount] = useState(2); // Change initial loadedCount to 3
   const scrollViewRef = useRef(null);
@@ -109,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VideoUploadList;
+export default GetS3Videos;
