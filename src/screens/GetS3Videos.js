@@ -9,16 +9,16 @@ import {
   AWS_REGION,
 } from '@env';
 import CustomVideoPlayer from '../components/Video/CustomVideoPlayer';
+import DotLoader from '../components/loader/DotLoader';
 
-const VideoUploadList = () => {
+const GetS3Videos = () => {
   const [videoData, setVideoData] = useState([]);
   const [loadedCount, setLoadedCount] = useState(2); // Change initial loadedCount to 3
   const scrollViewRef = useRef(null);
   // aws s3 configuration
   const bucketName = AWS_BUCKET_NAME;
   const fileType = 'video';
-  const BASE_URL =
-    'https://shahadot-tfp-hellosuperstars.s3.ap-southeast-1.amazonaws.com/';
+  const BASE_URL = `https://${bucketName}.s3.${AWS_REGION}.amazonaws.com/`;
 
   const s3 = new S3({
     accessKeyId: AWS_ACCESS_KEY_ID,
@@ -79,7 +79,9 @@ const VideoUploadList = () => {
         scrollEventThrottle={400}>
         {renderVideoItems()}
         {loadedCount < videoData.length && (
-          <Text style={styles.loadMoreText}>Loading more...</Text>
+          <View style={{alignItems: 'center'}}>
+            <DotLoader />
+          </View>
         )}
       </ScrollView>
     </View>
@@ -107,4 +109,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default VideoUploadList;
+export default GetS3Videos;

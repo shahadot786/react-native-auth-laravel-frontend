@@ -12,8 +12,7 @@ import Colors from '../../constants/Colors';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
-import Images from '../../constants/Images';
-import FastImage from 'react-native-fast-image';
+import VideoLoader from '../loader/VideoLoader';
 
 const width = Dimensions.get('screen').width;
 const screenHeight = Dimensions.get('screen').height;
@@ -102,8 +101,8 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
           onError={error => console.error(error)}
           //repeat
           //volume={volume}
-          poster={'https://images.shrcreation.com/Others/poster.jpg'}
-          posterResizeMode={'contain'}
+          // poster={'https://images.shrcreation.com/Others/poster.jpg'}
+          // posterResizeMode={'contain'}
         />
       </TouchableWithoutFeedback>
       {/* end video player */}
@@ -140,15 +139,7 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
         </TouchableOpacity>
       )}
       {/* end cancel button if isCancel active */}
-      {isLoading && (
-        <View style={styles.loading}>
-          <FastImage
-            source={Images.loadingGif}
-            style={{width: 50, height: 50}}
-            resizeMode={FastImage.resizeMode.contain}
-          />
-        </View>
-      )}
+      {isLoading && <VideoLoader />}
       {/* end loader */}
       {hideControl ? (
         <>
@@ -171,23 +162,25 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
                 thumbTintColor="white"
               />
 
-              <TouchableWithoutFeedback onPress={handleMutePress}>
-                <View style={styles.volumeButton}>
-                  {isMuted ? (
-                    <Ionicons
-                      name="volume-medium-sharp"
-                      size={26}
-                      color={Colors.white}
-                    />
-                  ) : (
-                    <Ionicons
-                      name="volume-mute"
-                      size={26}
-                      color={Colors.white}
-                    />
-                  )}
-                </View>
-              </TouchableWithoutFeedback>
+              {!isLoading && (
+                <TouchableWithoutFeedback onPress={handleMutePress}>
+                  <View style={styles.volumeButtonOutside}>
+                    {isMuted ? (
+                      <Ionicons
+                        name="volume-medium-sharp"
+                        size={26}
+                        color={Colors.white}
+                      />
+                    ) : (
+                      <Ionicons
+                        name="volume-mute"
+                        size={26}
+                        color={Colors.white}
+                      />
+                    )}
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
               {/* volume */}
               {/* {isMuted && (
                 <Slider
@@ -207,19 +200,21 @@ const CustomVideoPlayer = ({videoUrl, isCancel, onCancelPress}) => {
         </>
       ) : (
         <>
-          <TouchableWithoutFeedback onPress={handleMutePress}>
-            <View style={styles.volumeButtonOutside}>
-              {isMuted ? (
-                <Ionicons
-                  name="volume-medium-sharp"
-                  size={26}
-                  color={Colors.white}
-                />
-              ) : (
-                <Ionicons name="volume-mute" size={26} color={Colors.white} />
-              )}
-            </View>
-          </TouchableWithoutFeedback>
+          {!isLoading && (
+            <TouchableWithoutFeedback onPress={handleMutePress}>
+              <View style={styles.volumeButtonOutside}>
+                {isMuted ? (
+                  <Ionicons
+                    name="volume-medium-sharp"
+                    size={26}
+                    color={Colors.white}
+                  />
+                ) : (
+                  <Ionicons name="volume-mute" size={26} color={Colors.white} />
+                )}
+              </View>
+            </TouchableWithoutFeedback>
+          )}
           {/* volume */}
           {/* {isMuted && (
             <Slider
@@ -270,15 +265,6 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     position: 'absolute',
-  },
-  loading: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   slider: {
     flex: 1,

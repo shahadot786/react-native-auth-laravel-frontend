@@ -16,7 +16,7 @@ import VideoCropperScreen from '../screens/greetings/VideoCropperScreen';
 import AwsImageUploader from '../screens/AwsImageUploader';
 import FileUploadList from '../screens/FileUploadList';
 import AwsVideoUploader from '../screens/AwsVideoUploader';
-import VideoUploadList from '../screens/VideoUploadList';
+import VideoUploadList from '../screens/GetS3Videos';
 
 const Stack = createNativeStackNavigator();
 
